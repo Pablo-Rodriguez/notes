@@ -1,0 +1,22 @@
+{
+  "name": "notes",
+  "version": "1.0.0",
+  "description": "Small notes app",
+  "main": "backend/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pablo-Rodriguez/notes.git"
+  },
+  "keywords": [
+    "notes"
+  ],
+  "author": " <Pablo-Rodriguez pablorp1996@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Pablo-Rodriguez/notes/issues"
+  },
+  "homepage": "https://github.com/Pablo-Rodriguez/notes#readme"
+}
