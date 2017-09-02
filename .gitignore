@@ -1,6 +1,6 @@
 # Own
 private
-.lock
+*.lock
 # Logs
 logs
 *.log

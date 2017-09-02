@@ -1,4 +1,6 @@
 
+const {join} = require('path')
+const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const methodOverride = require('method-override')
@@ -27,6 +29,7 @@ module.exports = class extends Middleware {
     this.router.use(passport.initialize())
     this.router.use(passport.session())
     super.use('morgan', morgan('dev'))
+    this.router.use(express.static(join(__dirname, '..', 'public')))
   }
 
   postmiddleware () {}
