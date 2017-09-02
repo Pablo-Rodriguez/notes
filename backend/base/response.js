@@ -1,7 +1,7 @@
 
 const messages = require('./messages')
 
-module.exports = class {
+module.exports = class Response {
   static sendData (res, data = {}) {
     res.json({
       error: false,
@@ -10,14 +10,16 @@ module.exports = class {
   }
 
   static sendOK (res) {
-    this.sendData(res)
+    Response.sendData(res)
   }
 
   static sendError (res, error) {
-    res.status(error.code).json({
-      error: true,
-      data: error.data
-    })
+    console.log(res.status)
+    res.status(500).end()
+    // res.status(error.code).json({
+    //   error: true,
+    //   data: error.data
+    // })
   }
 
   static get NOT_FOUND () {

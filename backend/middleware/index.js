@@ -7,6 +7,7 @@ const passport = require('passport')
 const morgan = require('morgan')
 
 const Middleware = require('../base/middleware')
+const Response = require('../base/response')
 const errors = require('./errors')
 const config = require('../config/')
 
@@ -31,6 +32,6 @@ module.exports = class extends Middleware {
   postmiddleware () {}
 
   lastmiddleware () {
-    this.router.use(errors())
+    this.router.use(errors(Response))
   }
 }

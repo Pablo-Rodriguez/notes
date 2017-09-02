@@ -1,5 +1,6 @@
 
 const {Router} = require('express')
+const {wrapAsync} = require('../lib/helpers')
 
 module.exports = class {
   constructor (router = Router()) {
@@ -18,6 +19,10 @@ module.exports = class {
 
   getRouter () {
     return this.router
+  }
+
+  static wrap (fn) {
+    return wrapAsync(fn)
   }
 
   configure () {}

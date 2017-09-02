@@ -5,5 +5,8 @@ module.exports = {
     saveUninitialized: false,
     resave: false,
     secret: process.env.EXPRESS_SESSION_SECRET || 'secret'
+  },
+  security: {
+    saltRounds: 10
   }
 }

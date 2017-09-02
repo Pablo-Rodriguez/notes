@@ -23,6 +23,15 @@ test('Signup with invalid usernames', async t => {
   await areInvalid(t, invalid, 'name')
 })
 
+test('Signup with existing username', async t => {
+  const err = new Error('MongoError')
+  err.code = 11000
+  t.context.Model.create.throws(err)
+  await t.context.Controller.signup({body: user})
+  t.truthy(t.context.Response.sendError.calledOnce)
+  t.truthy(t.context.Response.sendError.calledWith(undefined, t.context.Response.BAD_REQUEST))
+})
+
 test('Signup with invalid passwords', async t => {
   const invalid = ['', null, undefined, 'asd', 'a'.repeat(300)]
   await areInvalid(t, invalid, 'password')
