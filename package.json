@@ -9,38 +9,50 @@
   "scripts": {
     "test": "./node_modules/.bin/ava ./test/**/*.test.js",
     "standard": "standard --fix",
-	"webpack": "./node_modules/.bin/webpack --watch",
-    "dev": "./node_modules/.bin/nodemon --exec 'npm run standard && npm run start'",
-    "start": "node --trace-warnings backend/server.js"
+    "gulp": "gulp",
+    "dev": "nodemon --exec 'npm run standard && npm run start'",
+    "start": "node --trace-warnings backend/server.js",
+    "sync": "browser-sync start --proxy localhost:5000 --port 3000 --files ./backend/public"
   },
   "devDependencies": {
     "ava": "^0.22.0",
     "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-emotion": "^9.0.0",
     "babel-preset-env": "^1.6.0",
-    "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "babelify": "^8.0.0",
+    "browser-sync": "^2.23.6",
+    "browserify": "^16.0.0",
+    "gulp": "^3.9.1",
+    "gulp-htmlmin": "^4.0.0",
+    "gulp-stylus": "^2.7.0",
+    "gulp-uglify-es": "^1.0.0",
     "html-webpack-plugin": "^2.30.1",
+    "nib": "^1.1.2",
     "nodemon": "^1.11.0",
     "sinon": "^3.2.1",
     "standard": "^10.0.3",
-    "webpack": "^3.5.5"
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.17.2",
+    "choo": "^6.7.0",
+    "choo-devtools": "^2.3.3",
     "cookie-parser": "^1.4.3",
+    "emotion": "^9.0.0",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
     "indicative": "^3.0.0",
+    "isomorphic-fetch": "^2.2.1",
     "method-override": "^2.3.9",
     "mixin-es6": "^1.0.1",
     "mongoose": "^4.11.8",
     "morgan": "^1.8.2",
     "passport": "^0.4.0",
-    "passport-local": "^1.0.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "styled-components": "^2.1.2"
+    "passport-local": "^1.0.0"
   }
 }

@@ -1,12 +1,12 @@
 {
   "presets": [
-    "react",
     "stage-2",
     ["env", {
-      "modules": false,
-      "tagets": {
-        "browsers": ["last 2 versions", "sfari >= 7"]
+      "modules": "commonjs",
+      "targets": {
+        "browsers": ["last 2 versions", "safari >= 7"]
       }
     }]
-  ]
+  ],
+  "plugins": ["emotion"]
 }
