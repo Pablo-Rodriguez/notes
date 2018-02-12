@@ -1,2 +1,2 @@
 # Notes (WIP)
-Small notes app as an open source replacemente (only the basic features) for evernote or others. This is just an excuse for me to learn or practice certain tecnologies such as react, redux, ava...
+Small notes Progressive Web App as an open source replacemente (only the basic features) for evernote and others.
