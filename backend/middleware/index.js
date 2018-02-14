@@ -7,11 +7,14 @@ const methodOverride = require('method-override')
 const expressSession = require('express-session')
 const passport = require('passport')
 const morgan = require('morgan')
+const fallback = require('express-history-api-fallback')
 
 const Middleware = require('../base/middleware')
 const Response = require('../base/response')
 const errors = require('./errors')
 const config = require('../config/')
+
+const root = join(__dirname, '..', 'public')
 
 module.exports = class extends Middleware {
   get config () {
@@ -29,10 +32,12 @@ module.exports = class extends Middleware {
     this.router.use(passport.initialize())
     this.router.use(passport.session())
     super.use('morgan', morgan('dev'))
-    this.router.use(express.static(join(__dirname, '..', 'public')))
+    this.router.use(express.static(root))
   }
 
-  postmiddleware () {}
+  postmiddleware () {
+    this.router.use(fallback('index.html', { root }))
+  }
 
   lastmiddleware () {
     this.router.use(errors(Response))
