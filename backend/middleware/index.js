@@ -12,12 +12,11 @@ const Middleware = require('../base/middleware')
 const Response = require('../base/response')
 const errors = require('./errors')
 const config = require('../config/')
+const auth = require('./auth')
+
+Middleware.register('auth', auth())
 
 module.exports = class extends Middleware {
-  get config () {
-    return config
-  }
-
   firstmiddleware () {}
 
   premiddleware () {

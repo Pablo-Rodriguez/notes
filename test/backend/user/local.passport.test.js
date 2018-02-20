@@ -1,62 +1,64 @@
 
 const {test, sinon} = require('../../infrastructure')
-const createModel = require('../../../backend/components/user/model')
 const Local = require('../../../backend/lib/passport/local')
 
 test.beforeEach(prepareTest)
 
 const user = {
   name: 'name',
-  password: 'password'
+  password: 'password',
+  get: function (prop) { return this[prop] }
 }
 
-test('Local login => valid user and password', async (t) => {
-  prepareMocks(t, user, user.name, Promise.resolve(true))
-  const done = await execAndReturnSpy(t, user)
-  checkResultsAndDoneArgs(t, done, null, user)
+test('Local login with valid user and password', async (t) => {
+  t.context.Model.getByName.returns(Promise.resolve(user)).once().withArgs(user.name)
+  t.context.Model.comparePassword.returns(Promise.resolve(true)).once().withArgs(user.password, user.password)
+  const done = createDoneSpy(null, user)
+  await t.context.middleware(user.name, user.password, done)
+  verifyMockCalls(t, done)
 })
 
-test('Local login => wrong username', async (t) => {
-  prepareMocks(t, null)
-  const done = await execAndReturnSpy(t, user)
-  checkResultsAndDoneArgs(t, done, null, false)
-  checkErrors(t, done)
+test('Local login with wrong username', async (t) => {
+  t.context.Model.getByName.returns(Promise.resolve(null)).once().withArgs(user.name)
+  t.context.Model.comparePassword.never()
+  const done = createDoneSpy(null, false, new Error('WrongAccount'))
+  await t.context.middleware(user.name, user.password, done)
+  verifyMockCalls(t, done)
 })
 
-test('Local login => wrong password', async (t) => {
-  prepareMocks(t, user, user.name, Promise.resolve(false))
-  const done = await execAndReturnSpy(t, user)
-  checkResultsAndDoneArgs(t, done, null, false)
-  checkErrors(t, done)
+test('Local login with wrong password', async (t) => {
+  t.context.Model.getByName.returns(Promise.resolve(user)).once().withArgs(user.name)
+  t.context.Model.comparePassword.returns(Promise.resolve(false)).once().withArgs(user.password, user.password)
+  const done = createDoneSpy(null, false, new Error('WrongAccount'))
+  await t.context.middleware(user.name, user.password, done)
+  verifyMockCalls(t, done)
 })
 
-function checkErrors (t, done) {
-  t.truthy(done.args[0][2] instanceof Error)
-  t.is(done.args[0][2].message, 'Wrong Account')
+test('Local login throws error', async (t) => {
+  t.context.Model.getByName.throws(new Error('Error')).once().withArgs(user.name)
+  t.context.Model.comparePassword.never()
+  const done = createDoneSpy(null, false, new Error('Error'))
+  await t.context.middleware(user.name, user.password, done)
+  verifyMockCalls(t, done)
+})
+
+function createDoneSpy (...args) {
+  const done = sinon.mock()
+  done.once().calledWith(...args)
+  return done
 }
 
-function prepareMocks (t, user, query, bcryptResult) {
-  t.context.Model.getByName.returns(user).calledWith(query)
-  t.context.Bcrypt.compare.returns(bcryptResult)
-}
-
-function checkResultsAndDoneArgs (t, done, ...args) {
+function verifyMockCalls (t, done) {
   t.truthy(t.context.Model.getByName.verify())
-  t.truthy(done.calledOnce)
-  t.truthy(done.calledWith(...args))
-}
-
-async function execAndReturnSpy (t, user) {
-  const spy = sinon.spy()
-  await t.context.middleware(user.name, user.password, spy)
-  return spy
+  t.truthy(t.context.Model.comparePassword.verify())
+  t.truthy(done.verify())
 }
 
 function prepareTest (t) {
-  t.context.Model = createModel({})
-  t.context.Model.getByName = sinon.mock()
-  t.context.Bcrypt = {
-    compare: sinon.mock()
+  t.context.Model = {
+    getByName: sinon.mock(),
+    comparePassword: sinon.mock()
   }
-  t.context.middleware = Local.strategy(t.context.Model, t.context.Bcrypt)
+  t.context.middleware = Local.strategy(t.context.Model)
 }
+

@@ -1,92 +1,111 @@
 
-const {test, sinon, Util} = require('../../infrastructure')
-const createController = require('../../../backend/components/user/controller')
-const createModel = require('../../../backend/components/user/model')
+const {test, sinon, Util, Errors} = require('../../infrastructure')
+const createController = require('../../../backend/services/user/controller')
 const Response = require('../../../backend/base/response')
+const Passport = require('../../../backend/lib/passport')
 
 const user = {
-  name: 'name',
-  password: 'mypassword$!()/·'
+  name: 'test',
+  password: 'testtest',
+  get: function (prop) { return this[prop] }
 }
+
+const req = {
+  body: {
+    username: user.name,
+    password: user.password
+  },
+  login: (user, fn) => fn()
+}
+
+const res = {mock: 'res'}
 
 test.beforeEach(prepareTest)
 
 test('Signup with correct user', async t => {
-  t.context.Model.create.returns(Promise.resolve()).once()
-  await t.context.Controller.signup({body: user})
+  t.context.Model.create.returns(Promise.resolve()).once().calledWith(user)
+  await t.context.Controller.signup({body: user}, res)
+  t.truthy(t.context.Response.sendOK.calledWith(res))
   t.truthy(t.context.Model.create.verify())
-  t.truthy(t.context.Response.sendOK.calledOnce)
 })
 
-test('Signup with invalid usernames', async t => {
-  const invalid = ['', null, undefined, '$!()/·', 'a'.repeat('40')]
-  await areInvalid(t, invalid, 'name')
+test('Signup with invalid data', async t => {
+  t.context.Model.create.throws(Errors.SEQUELIZE_VALIDATION).once().withArgs(user)
+  await t.context.Controller.signup({body: user}, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.CUSTOM_BAD_REQUEST([])))
+  t.truthy(t.context.Model.create.verify())
 })
 
-test('Signup with existing username', async t => {
-  const err = new Error('MongoError')
-  err.code = 11000
-  t.context.Model.create.throws(err)
-  await t.context.Controller.signup({body: user})
-  t.truthy(t.context.Response.sendError.calledOnce)
-  t.truthy(t.context.Response.sendError.calledWith(undefined, t.context.Response.BAD_REQUEST))
-})
-
-test('Signup with invalid passwords', async t => {
-  const invalid = ['', null, undefined, 'asd', 'a'.repeat(300)]
-  await areInvalid(t, invalid, 'password')
-})
-
-test('Signup database failure', async t => {
-  const error = 'Test Error'
-  t.context.Model.create.throws(error)
-  try {
-    await t.context.Controller.signup({body: user})
-    t.fail()
-  } catch (err) {
-    t.is(err.name, error)
-  }
+test('Signup throws error', async t => {
+  t.context.Model.create.throws(new Error('error')).once().withArgs(user)
+  await t.context.Controller.signup({body: user}, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.SERVER_ERROR))
+  t.truthy(t.context.Model.create.verify())
 })
 
 test('Login with existing user', async t => {
-  await t.context.Controller.login({
-    isAuthenticated: sinon.stub().returns(true)
-  })
-  t.truthy(t.context.Response.sendOK.calledOnce)
+  t.context.Model.getByName.returns(Promise.resolve(user)).once().withArgs(user.name)
+  t.context.Model.comparePassword.returns(Promise.resolve(true)).once().withArgs(user.password, user.password)
+  await t.context.Controller.login(req, res)
+  t.truthy(t.context.Response.sendOK.calledWith(res))
+  t.truthy(t.context.Model.getByName.verify())
+  t.truthy(t.context.Model.comparePassword.verify())
 })
 
-test('Login with wrong data', async t => {
-  await t.context.Controller.login({
-    isAuthenticated: sinon.stub().returns(false)
-  })
-  t.truthy(t.context.Response.sendError.calledOnce)
-  t.truthy(t.context.Response.sendError.calledWith(undefined, t.context.Response.BAD_REQUEST))
+test('Login without credentials', async t => {
+  t.context.Model.getByName.never()
+  t.context.Model.comparePassword.never()
+  await t.context.Controller.login({body: {}}, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.BAD_REQUEST))
+  t.truthy(t.context.Model.getByName.verify())
+  t.truthy(t.context.Model.comparePassword.verify())
+})
+
+test('Login with wrong username', async t => {
+  t.context.Model.getByName.returns(Promise.resolve(null)).once().withArgs(user.name)
+  t.context.Model.comparePassword.never()
+  await t.context.Controller.login(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.BAD_REQUEST))
+  t.truthy(t.context.Model.getByName.verify())
+  t.truthy(t.context.Model.comparePassword.verify())
+})
+
+test('Login with wrong password', async t => {
+  t.context.Model.getByName.returns(Promise.resolve(user)).once().withArgs(user.name)
+  t.context.Model.comparePassword.returns(Promise.resolve(false)).once().withArgs(user.password, user.password)
+  await t.context.Controller.login(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.BAD_REQUEST))
+  t.truthy(t.context.Model.getByName.verify())
+  t.truthy(t.context.Model.comparePassword.verify())
+})
+
+test('Login throws error', async t => {
+  t.context.Model.getByName.throws(new Error('error'))
+  await t.context.Controller.login(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.SERVER_ERROR))
 })
 
 test('Logout', t => {
   t.context.Controller.logout({
     logout: sinon.spy()
-  })
+  }, res)
   t.truthy(t.context.Response.sendOK.calledOnce)
-  t.truthy(t.context.Response.sendOK.calledWith(undefined))
+  t.truthy(t.context.Response.sendOK.calledWith(res))
 })
 
-async function areInvalid (t, invalid, field) {
-  for (let element of invalid) {
-    await t.context.Controller.signup({body: Object.assign({}, user, {
-      [field]: element
-    })})
-    t.truthy(t.context.Response.sendError.calledOnce)
-    t.context.Response.sendError.reset()
-  }
-}
-
 function prepareTest (t) {
-  t.context.Model = createModel({})
-  t.context.Model.create = sinon.mock()
+  t.context.Model = {
+    getByName: sinon.mock(),
+    create: sinon.mock(),
+    comparePassword: sinon.mock()
+  }
   t.context.Response = Util.deepAssign({}, Response, {
     sendOK: sinon.spy(),
-    sendError: sinon.spy()
+    sendError: sinon.spy(),
+    sendData: sinon.spy(),
+    CUSTOM_BAD_REQUEST: Response.CUSTOM_BAD_REQUEST
   })
-  t.context.Controller = createController(t.context.Model, t.context.Response)
+  Passport.configure(t.context.Model)
+  t.context.Controller = createController(t.context.Model, t.context.Response, {
+    Passport, parseError: Util.parseError(t.context.Response)})
 }

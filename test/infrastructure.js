@@ -4,4 +4,11 @@ const sinon = require('sinon')
 
 const Util = require('../backend/lib/helpers')
 
-module.exports = {test, sinon, Util}
+const Errors = {
+  SEQUELIZE_VALIDATION: Object.assign(new Error('SequelizeValidationError'), {
+    name: 'SequelizeValidationError',
+    errors: []
+  })
+}
+
+module.exports = {test, sinon, Util, Errors}

@@ -1,12 +1,5 @@
 
 module.exports = {
-  /**
-  * Funcion cuyo comportamiento es similar al de la libreria deep-assign
-  * pero que si sobreescribe funciones
-  * @param  {Object} target  Objeto al que incorporar/sobreescribir propiedades
-  * @param  {Object} sources Objeto que añade/sobreescribe propiedades de target
-  * @return {Object}         Objeto con las propiedades de ...sources añadidas
-  */
   deepAssign (target, ...sources) {
     Array.prototype.slice.call(sources).forEach((source) => {
       target = assign(target, source)
@@ -28,6 +21,7 @@ module.exports = {
     }
     return target
   },
+
   wrapAsync (fn) {
     if (fn.length <= 3) {
       return function (req, res, next) {
@@ -36,6 +30,16 @@ module.exports = {
     } else {
       return function (err, req, res, next) {
         fn(err, req, res, next).catch(next)
+      }
+    }
+  },
+
+  parseError (Response) {
+    return (res, error) => {
+      if (error.name === 'SequelizeValidationError') {
+        Response.sendError(res, Response.CUSTOM_BAD_REQUEST(error.errors.map((error) => error.message)))
+      } else {
+        Response.sendError(res, Response.SERVER_ERROR)
       }
     }
   }

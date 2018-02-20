@@ -7,10 +7,10 @@
   "author": "Pablo-Rodriguez <pablorp1996@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "./node_modules/.bin/ava ./test/**/*.test.js",
+    "test": "ava ./test/**/*.test.js --no-power-assert",
     "standard": "standard --fix",
-    "dev": "./node_modules/.bin/nodemon --exec 'npm run standard && npm run start'",
-    "start": "node --trace-warnings backend/server.js"
+    "dev": "./node_modules/.bin/nodemon --exec 'npm start'",
+    "start": "node --trace-warnings index.js"
   },
   "devDependencies": {
     "ava": "^0.22.0",
@@ -31,15 +31,18 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
-    "indicative": "^3.0.0",
     "method-override": "^2.3.9",
     "mixin-es6": "^1.0.1",
-    "mongoose": "^4.11.8",
     "morgan": "^1.8.2",
+    "mysql2": "^1.5.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "sequelize": "^4.33.4",
     "styled-components": "^2.1.2"
+  },
+  "ava": {
+    "compileEnhancements": false
   }
 }

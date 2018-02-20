@@ -1,52 +1,61 @@
 
 const messages = require('./messages')
 
-module.exports = class Response {
-  static sendData (res, data = {}) {
-    res.json({
-      error: false,
-      data
-    })
+module.exports = createResponse()
+
+function createResponse () {
+  class Response {
+    static sendData (res, data = {}) {
+      res.json({
+        error: false,
+        code: 200,
+        data
+      })
+    }
+
+    static sendOK (res) {
+      Response.sendData(res)
+    }
+
+    static sendError (res, error) {
+      res.status(error.code).json({
+        error: true,
+        code: error.code,
+        data: error.data
+      })
+    }
+
+    static CUSTOM_BAD_REQUEST (data) {
+      return {
+        code: 400,
+        data
+      }
+    }
   }
 
-  static sendOK (res) {
-    Response.sendData(res)
-  }
-
-  static sendError (res, error) {
-    console.log(res.status)
-    res.status(500).end()
-    // res.status(error.code).json({
-    //   error: true,
-    //   data: error.data
-    // })
-  }
-
-  static get NOT_FOUND () {
-    return {
+  Object.assign(Response, {
+    NOT_FOUND: {
       code: 404,
-      data: messages.NOT_FOUND
-    }
-  }
-
-  static get SERVER_ERROR () {
-    return {
+      data: {
+        message: messages.NOT_FOUND
+      }
+    },
+    SERVER_ERROR: {
       code: 500,
-      data: messages.SERVER_ERROR
-    }
-  }
-
-  static get FORBIDDEN () {
-    return {
+      data: {
+        message: messages.SERVER_ERROR
+      }
+    },
+    FORBIDDEN: {
       code: 403,
-      data: messages.FORBIDDEN
-    }
-  }
+      data: {
+        message: messages.FORBIDDEN
+      }
+    },
+    BAD_REQUEST: Response.CUSTOM_BAD_REQUEST({
+      message: messages.BAD_REQUEST
+    })
+  })
 
-  static get BAD_REQUEST () {
-    return {
-      code: 400,
-      data: messages.BAD_REQUEST
-    }
-  }
+  return Response
 }
