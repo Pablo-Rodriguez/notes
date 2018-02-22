@@ -2,6 +2,7 @@
 import html from 'choo/html'
 
 import style from './style'
+import toplinebox from '../n-topline-box/n-topline-box'
 
 const submit = (config, emit) => (e) => {
   e.preventDefault()
@@ -10,6 +11,8 @@ const submit = (config, emit) => (e) => {
 
 export default (config, emit, content) => {
   return html`
-    <form onsubmit=${submit(config, emit)} class=${style}>${content}</form>
+    ${toplinebox(html`
+      <form onsubmit=${submit(config, emit)} class=${style}>${content}</form>
+    `)}
   `
 }

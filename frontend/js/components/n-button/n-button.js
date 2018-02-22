@@ -1,10 +1,26 @@
 
-import html from 'choo/html'
+import {css} from 'emotion'
 
-import style from './style'
+import g from '../../lib/css-variables'
 
-export default (state, emit) => {
-  return html`
-    <div class=${style}></div>
-  `
-}
+export default css`
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  color: ${g.secondary.d};
+  border: 2px solid ${g.primary.n};
+  background-color: ${g.white};
+  box-shadow: ${g.shadow.side(2)};
+  font-size: 16px;
+  padding: .5em;
+
+  &:hover {
+    box-shadow: ${g.shadow.side(4)};
+  }
+
+  &:active {
+    box-shadow: none;
+    border-color: ${g.secondary.n};
+  }
+`
+
