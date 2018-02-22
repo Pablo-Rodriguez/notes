@@ -14,7 +14,7 @@ const errors = require('./errors')
 const config = require('../config/')
 const auth = require('./auth')
 
-Middleware.register('auth', auth())
+Middleware.register('auth', auth(Response))
 
 module.exports = class extends Middleware {
   firstmiddleware () {}
