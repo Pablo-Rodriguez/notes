@@ -1,62 +1,122 @@
 
-const {test, sinon, Util} = require('../../infrastructure')
-const createController = require('../../../backend/components/note/controller')
-const createModel = require('../../../backend/components/note/model')
+const {test, sinon, Util, Errors} = require('../../infrastructure')
+const createController = require('../../../backend/services/note/controller')
 const Response = require('../../../backend/base/response')
 
 test.beforeEach(prepareTest)
 
+const note = {
+  id: 1,
+  title: 'title',
+  body: 'body',
+  fk_user: 'username',
+  tags: []
+}
+
 const req = {
   user: {
     _id: 'asdflksjdlfkjsld',
-    name: 'username'
+    name: 'username',
+    notes: [note]
   },
   params: {
     id: 'akjdsfhaksjdhkasd'
   }
 }
 
-const note = {
-  user: req.user._id,
-  _id: 'akjdsfhaksjdhkasd',
-  title: 'title',
-  body: 'body'
-}
+const res = {is: 'response mock object'}
 
 test('Get all notes form logged user', async (t) => {
-  t.context.Model.findAll.returns([]).once().withArgs(req.user._id)
-  await t.context.Controller.get(req)
-  t.truthy(t.context.Response.sendData.withArgs(undefined, {notes: []}))
-  t.truthy(t.context.Model.findAll.verify())
+  t.context.Model.getAll.returns([]).once().withArgs(req.user.name)
+  await t.context.Controller.getAll(req, res)
+  t.truthy(t.context.Response.sendData.calledWith(res, {notes: []}))
+  t.truthy(t.context.Model.getAll.verify())
+})
+
+test('Get all notes throws error', async (t) => {
+  t.context.Model.getAll.throws(new Error('error')).once().withArgs(req.user.name)
+  await t.context.Controller.getAll(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.SERVER_ERROR))
+  t.truthy(t.context.Model.getAll.verify())
 })
 
 test('Get existing note from logged user', async (t) => {
-  t.context.Model.findByID.returns(note).once().withArgs(note.user, req.params.id)
-  await t.context.Controller.getNote(req)
-  t.truthy(t.context.Response.sendData.withArgs(undefined, {note}))
-  t.truthy(t.context.Model.findByID.verify())
+  t.context.Model.getByID.returns(note).once().withArgs(req.user.name, req.params.id)
+  await t.context.Controller.getNote(req, res)
+  t.truthy(t.context.Response.sendData.calledWith(res, {note}))
+  t.truthy(t.context.Model.getByID.verify())
 })
 
 test('Get unknown note from logged user', async (t) => {
-  t.context.Model.findByID.returns(null).once().withArgs(note.user, req.params.id)
-  await t.context.Controller.getNote(req)
-  t.truthy(t.context.Response.sendData.withArgs(undefined, {note: null}))
-  t.truthy(t.context.Model.findByID.verify())
+  t.context.Model.getByID.returns(null).once().withArgs(req.user.name, req.params.id)
+  await t.context.Controller.getNote(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.NOT_FOUND))
+  t.truthy(t.context.Model.getByID.verify())
 })
 
-// test('Create note that pass validation', async (t) => {
-//   t.context.Model.create.once(req.user._id)
-// })
+test('Get note throws error', async (t) => {
+  t.context.Model.getByID.throws(new Error('error')).once().withArgs(req.user.name, req.params.id)
+  await t.context.Controller.getNote(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.SERVER_ERROR))
+  t.truthy(t.context.Model.getByID.verify())
+})
+
+test('Create/update note that pass validation', async (t) => {
+  const note = {title: '', body: ''}
+  t.context.Model.createOrUpdate.once().withArgs(req.user.name, note)
+  await t.context.Controller.createOrUpdate(Object.assign({body: note}, req), res)
+  t.truthy(t.context.Response.sendOK.calledWith(res))
+  t.truthy(t.context.Model.createOrUpdate.verify())
+})
+
+test('Create/update note that does not pass validation', async (t) => {
+  t.context.Model.createOrUpdate.throws(Errors.SEQUELIZE_VALIDATION).once().withArgs(req.user.name, note)
+  await t.context.Controller.createOrUpdate(Object.assign({body: note}, req), res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.CUSTOM_BAD_REQUEST([])))
+  t.truthy(t.context.Model.createOrUpdate.verify())
+})
+
+test('Create/update throws error', async (t) => {
+  t.context.Model.createOrUpdate.throws(new Error('error')).once().withArgs(req.user.name, note)
+  await t.context.Controller.createOrUpdate(Object.assign({body: note}, req), res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.SERVER_ERROR))
+  t.truthy(t.context.Model.createOrUpdate.verify())
+})
+
+test('Delete existing note', async (t) => {
+  t.context.Model.delete.returns(Promise.resolve(1)).once().withArgs(req.user.name, req.params.id)
+  await t.context.Controller.delete(req, res)
+  t.truthy(t.context.Response.sendOK.calledWith(res))
+  t.truthy(t.context.Model.delete.verify())
+})
+
+test('Delete unknown note', async (t) => {
+  t.context.Model.delete.returns(Promise.resolve(0)).once().withArgs(req.user.name, req.params.id)
+  await t.context.Controller.delete(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.NOT_FOUND))
+  t.truthy(t.context.Model.delete.verify())
+})
+
+test('Delete note throws error', async (t) => {
+  t.context.Model.delete.throws(new Error('error')).once().withArgs(req.user.name, req.params.id)
+  await t.context.Controller.delete(req, res)
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.SERVER_ERROR))
+  t.truthy(t.context.Model.delete.verify())
+})
 
 function prepareTest (t) {
-  t.context.Model = createModel({})
-  t.context.Model.findAll = sinon.mock()
-  t.context.Model.findByID = sinon.mock()
-  t.context.Model.create = sinon.mock()
+  t.context.Model = {
+    getAll: sinon.mock(),
+    getByID: sinon.mock(),
+    createOrUpdate: sinon.mock(),
+    delete: sinon.mock()
+  }
   t.context.Response = Util.deepAssign({}, Response, {
     sendOK: sinon.spy(),
     sendData: sinon.spy(),
-    sendError: sinon.spy()
+    sendError: sinon.spy(),
+    CUSTOM_BAD_REQUEST: Response.CUSTOM_BAD_REQUEST
   })
-  t.context.Controller = createController(t.context.Model, t.context.Response)
+  t.context.Controller = createController(t.context.Model, t.context.Response, {
+    parseError: Util.parseError(t.context.Response)})
 }

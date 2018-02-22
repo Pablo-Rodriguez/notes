@@ -7,12 +7,12 @@
   "author": "Pablo-Rodriguez <pablorp1996@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "./node_modules/.bin/ava ./test/**/*.test.js",
+    "test": "ava ./test/**/*.test.js --no-power-assert",
     "standard": "standard --fix",
     "gulp": "gulp",
-    "dev": "nodemon --exec npm run start --watch ./backend --ignore ./backend/public",
-    "start": "node --trace-warnings backend/server.js",
-    "sync": "browser-sync start --proxy localhost:5000 --port 3000 --files ./backend/public"
+    "sync": "browser-sync start --proxy localhost:5000 --port 3000 --files ./backend/public",
+    "dev": "./node_modules/.bin/nodemon --exec 'npm start'",
+    "start": "node --trace-warnings index.js"
   },
   "devDependencies": {
     "ava": "^0.22.0",
@@ -43,18 +43,20 @@
     "choo": "^6.7.0",
     "choo-devtools": "^2.3.3",
     "cookie-parser": "^1.4.3",
-    "debounce": "^1.1.0",
     "emotion": "^9.0.0",
     "express": "^4.15.4",
     "express-history-api-fallback": "^2.2.1",
     "express-session": "^1.15.5",
-    "indicative": "^3.0.0",
     "isomorphic-fetch": "^2.2.1",
     "method-override": "^2.3.9",
     "mixin-es6": "^1.0.1",
-    "mongoose": "^4.11.8",
     "morgan": "^1.8.2",
+    "mysql2": "^1.5.2",
     "passport": "^0.4.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "sequelize": "^4.33.4"
+  },
+  "ava": {
+    "compileEnhancements": false
   }
 }

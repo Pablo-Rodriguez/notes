@@ -13,14 +13,13 @@ const Middleware = require('../base/middleware')
 const Response = require('../base/response')
 const errors = require('./errors')
 const config = require('../config/')
+const auth = require('./auth')
 
 const root = join(__dirname, '..', 'public')
 
-module.exports = class extends Middleware {
-  get config () {
-    return config
-  }
+Middleware.register('auth', auth(Response))
 
+module.exports = class extends Middleware {
   firstmiddleware () {}
 
   premiddleware () {

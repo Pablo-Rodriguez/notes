@@ -2,23 +2,23 @@
 const Strategy = require('passport-local')
 
 module.exports = class LocalStrategy {
-  static use (Model) {
-    return new Strategy(LocalStrategy.strategy(Model))
+  static use (UserModel) {
+    return new Strategy(LocalStrategy.strategy(UserModel))
   }
 
-  static strategy (Model, Bcrypt) {
+  static strategy (UserModel) {
     return async (name, password, done) => {
       try {
-        let user = await Model.getByName(name)
+        let user = await UserModel.getByName(name)
         if (user != null) {
-          let validPassword = await Bcrypt.compare(password, user.password)
+          let validPassword = await UserModel.comparePassword(password, user.get('password'))
           if (validPassword) {
             return done(null, user)
           }
         }
-        throw new Error('Wrong Account')
-      } catch (err) {
-        done(null, false, err)
+        throw new Error('WrongAccount')
+      } catch (error) {
+        done(null, false, error)
       }
     }
   }

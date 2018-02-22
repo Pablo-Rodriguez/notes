@@ -4,6 +4,12 @@ module.exports = {
     use: true
   },
   db: {
-    url: 'mongodb://localhost/Notes'
+    url: 'mysql://test:test@localhost/Notes',
+    options: {
+      logging: false
+    },
+    sync: {
+      force: true
+    }
   }
 }

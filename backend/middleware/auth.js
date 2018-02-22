@@ -1,7 +1,5 @@
 
-const Response = require('../base/response')
-
-module.exports = () => {
+module.exports = (Response) => {
   return (req, res, next) => {
     if (req.isAuthenticated()) {
       next(null)
