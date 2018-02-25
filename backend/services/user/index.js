@@ -5,18 +5,16 @@ const createController = require('./controller')
 const Router = require('../../base/router')
 const Passport = require('../../lib/passport')
 const Response = require('../../base/response')
-const {parseError} = require('../../lib/helpers')
 
 module.exports = class extends Router {
   static get mountPoint () {
-    return '/user'
+    return '/api'
   }
 
   configure () {
     const Schema = DBSchema.get(this.config.db)
     const Model = createModel(Schema)
-    this.Controller = createController(Model, Response, {
-      Passport, parseError: parseError(Response)})
+    this.Controller = createController(Model, Response, {Passport})
   }
 
   routes () {

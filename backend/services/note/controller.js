@@ -1,7 +1,7 @@
 
 const Controller = require('../../base/controller')
 
-module.exports = (Model, Response, {parseError}) => class extends Controller {
+module.exports = (Model, Response) => class extends Controller {
   static async getAll (req, res) {
     try {
       const notes = await Model.getAll(req.user.name)
@@ -29,7 +29,7 @@ module.exports = (Model, Response, {parseError}) => class extends Controller {
       await Model.createOrUpdate(req.user.name, req.body)
       Response.sendOK(res)
     } catch (error) {
-      parseError(res, error)
+      Response.handleValidationErrors(res, error)
     }
   }
 

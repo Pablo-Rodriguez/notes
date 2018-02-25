@@ -6,7 +6,7 @@ import toplinebox from '../n-topline-box/n-topline-box'
 
 const submit = (config, emit) => (e) => {
   e.preventDefault()
-  emit(config.event, e)
+  emit(config.event, e.target.elements)
 }
 
 export default (config, emit, content) => {

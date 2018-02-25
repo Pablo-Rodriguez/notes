@@ -3,7 +3,14 @@ const Strategy = require('passport-local')
 
 module.exports = class LocalStrategy {
   static use (UserModel) {
-    return new Strategy(LocalStrategy.strategy(UserModel))
+    return new Strategy(LocalStrategy.FIELDS, LocalStrategy.strategy(UserModel))
+  }
+
+  static get FIELDS () {
+    return {
+      usernameField: 'name',
+      passwordField: 'password'
+    }
   }
 
   static strategy (UserModel) {

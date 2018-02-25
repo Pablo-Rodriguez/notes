@@ -11,5 +11,10 @@ export default css`
     font-size: 16px;
     padding: .5em;
   }
+  span {
+    color: ${g.error};
+  }
 `
-
+export const error = css`
+  border-color: ${g.error};
+`

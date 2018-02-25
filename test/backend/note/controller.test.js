@@ -72,7 +72,7 @@ test('Create/update note that pass validation', async (t) => {
 test('Create/update note that does not pass validation', async (t) => {
   t.context.Model.createOrUpdate.throws(Errors.SEQUELIZE_VALIDATION).once().withArgs(req.user.name, note)
   await t.context.Controller.createOrUpdate(Object.assign({body: note}, req), res)
-  t.truthy(t.context.Response.sendError.calledWith(res, Response.CUSTOM_BAD_REQUEST([])))
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.CUSTOM_BAD_REQUEST({fields: []})))
   t.truthy(t.context.Model.createOrUpdate.verify())
 })
 
@@ -115,8 +115,8 @@ function prepareTest (t) {
     sendOK: sinon.spy(),
     sendData: sinon.spy(),
     sendError: sinon.spy(),
-    CUSTOM_BAD_REQUEST: Response.CUSTOM_BAD_REQUEST
+    CUSTOM_BAD_REQUEST: Response.CUSTOM_BAD_REQUEST,
+    handleValidationErrors: Response.handleValidationErrors
   })
-  t.context.Controller = createController(t.context.Model, t.context.Response, {
-    parseError: Util.parseError(t.context.Response)})
+  t.context.Controller = createController(t.context.Model, t.context.Response)
 }

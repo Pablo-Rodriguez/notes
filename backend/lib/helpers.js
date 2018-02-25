@@ -32,15 +32,5 @@ module.exports = {
         fn(err, req, res, next).catch(next)
       }
     }
-  },
-
-  parseError (Response) {
-    return (res, error) => {
-      if (error.name === 'SequelizeValidationError') {
-        Response.sendError(res, Response.CUSTOM_BAD_REQUEST(error.errors.map((error) => error.message)))
-      } else {
-        Response.sendError(res, Response.SERVER_ERROR)
-      }
-    }
   }
 }

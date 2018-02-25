@@ -1,7 +1,7 @@
 
 module.exports = {
-  NOT_FOUND: 'Lo que busca no existe',
-  SERVER_ERROR: 'Hemos tenido un problema',
-  FORBIDDEN: 'No puedes acceder aquí sin loggearte',
-  BAD_REQUEST: 'Peticion invalida'
+  NOT_FOUND: 'What you are lookin for is not here or does not exist.',
+  SERVER_ERROR: 'We have made a mistake. Not your fault',
+  FORBIDDEN: 'You have to be logged to access this',
+  BAD_REQUEST: 'Bad request'
 }

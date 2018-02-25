@@ -12,7 +12,7 @@ const user = {
 
 const req = {
   body: {
-    username: user.name,
+    name: user.name,
     password: user.password
   },
   login: (user, fn) => fn()
@@ -32,7 +32,7 @@ test('Signup with correct user', async t => {
 test('Signup with invalid data', async t => {
   t.context.Model.create.throws(Errors.SEQUELIZE_VALIDATION).once().withArgs(user)
   await t.context.Controller.signup({body: user}, res)
-  t.truthy(t.context.Response.sendError.calledWith(res, Response.CUSTOM_BAD_REQUEST([])))
+  t.truthy(t.context.Response.sendError.calledWith(res, Response.CUSTOM_BAD_REQUEST({fields: []})))
   t.truthy(t.context.Model.create.verify())
 })
 
@@ -103,9 +103,9 @@ function prepareTest (t) {
     sendOK: sinon.spy(),
     sendError: sinon.spy(),
     sendData: sinon.spy(),
-    CUSTOM_BAD_REQUEST: Response.CUSTOM_BAD_REQUEST
+    CUSTOM_BAD_REQUEST: Response.CUSTOM_BAD_REQUEST,
+    handleValidationErrors: Response.handleValidationErrors
   })
   Passport.configure(t.context.Model)
-  t.context.Controller = createController(t.context.Model, t.context.Response, {
-    Passport, parseError: Util.parseError(t.context.Response)})
+  t.context.Controller = createController(t.context.Model, t.context.Response, {Passport})
 }

@@ -25,6 +25,16 @@ function createResponse () {
       })
     }
 
+    static handleValidationErrors (res, error) {
+      if (error.type === 'Validation error') {
+        this.sendError(res, Response.CUSTOM_BAD_REQUEST({
+          fields: error.errors
+        }))
+      } else {
+        this.sendError(res, Response.SERVER_ERROR)
+      }
+    }
+
     static CUSTOM_BAD_REQUEST (data) {
       return {
         code: 400,
