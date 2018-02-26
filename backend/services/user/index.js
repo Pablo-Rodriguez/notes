@@ -18,8 +18,9 @@ module.exports = class extends Router {
   }
 
   routes () {
-    this.post('/login', Router.wrap(this.Controller.login))
     this.post('/signup', Router.wrap(this.Controller.signup))
-    this.post('/logout', this.Controller.logout)
+    this.post('/login', Router.wrap(this.Controller.login))
+    this.get('/session', 'auth', this.Controller.session)
+    this.post('/logout', 'auth', this.Controller.logout)
   }
 }

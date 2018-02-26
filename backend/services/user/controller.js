@@ -1,5 +1,6 @@
 
 const Controller = require('../../base/controller')
+const Messages = require('./messages')
 
 module.exports = (Model, Response, {Passport}) => class extends Controller {
   static async signup (req, res) {
@@ -7,7 +8,6 @@ module.exports = (Model, Response, {Passport}) => class extends Controller {
       await Model.create(req.body)
       Response.sendOK(res)
     } catch (error) {
-      console.log(error)
       Response.handleValidationErrors(res, error)
     }
   }
@@ -20,12 +20,18 @@ module.exports = (Model, Response, {Passport}) => class extends Controller {
     } catch (error) {
       if (error === 'Missing credentials' || error === 'WrongAccount') {
         Response.sendError(res, Response.CUSTOM_BAD_REQUEST({
-          message: 'Wrong username and/or password'
+          message: Messages.LOGIN_FAILURE
         }))
       } else {
         Response.sendError(res, Response.SERVER_ERROR)
       }
     }
+  }
+
+  static session (req, res) {
+    Response.sendData(res, {
+      name: req.user.name
+    })
   }
 
   static logout (req, res) {
