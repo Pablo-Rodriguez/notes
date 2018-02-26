@@ -4,7 +4,7 @@ export default {
     data: null,
     error: null,
     loading: false,
-    logged: false
+    logged: null
   }
 }
 

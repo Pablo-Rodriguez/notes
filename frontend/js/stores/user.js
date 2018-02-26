@@ -9,8 +9,8 @@ export default ({api, handlers}) => (state, bus) => {
       const response = await api.signup(e.name.value, e.password.value, e.repeat.value)
       user.loading = false
       bus.emit(state.events.PUSHSTATE, '/login')
-    } catch (e) {
-      handlers.handleErrors(state, bus, user, e)
+    } catch (error) {
+      handlers.handleErrors(state, bus, user, error)
     }
   })
 
@@ -19,10 +19,32 @@ export default ({api, handlers}) => (state, bus) => {
       clearAndChangeToLoading(state, bus)
       const response = await api.login(e.name.value, e.password.value)
       user.loading = false
+      user.logged = true
+      user.data = response.data
       bus.emit(state.events.PUSHSTATE, '/')
-    } catch (e) {
-      handlers.handleErrors(state, bus, user, e)
+    } catch (error) {
+      handlers.handleErrors(state, bus, user, error)
     }
+  })
+
+  bus.on(types.GET_SESSION, async (e) => {
+    try {
+      clearUser(user)
+      const response = await api.session()
+      user.data = response.data
+      user.logged = true
+      bus.emit(state.events.RENDER)
+    } catch (error) {
+      handlers.handleErrors(state, bus, user, error)
+    }
+  })
+
+  bus.on(types.LOGOUT, async (e) => {
+    try {
+      clearUser(user)
+      api.logout()
+      bus.emit(state.events.PUSHSTATE, '/login')
+    } catch (error) {}
   })
 }
 

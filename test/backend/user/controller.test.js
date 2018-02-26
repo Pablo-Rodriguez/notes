@@ -51,7 +51,7 @@ test('Login with existing user', async t => {
   t.context.Model.getByName.returns(Promise.resolve(user)).once().withArgs(user.name)
   t.context.Model.comparePassword.returns(Promise.resolve(true)).once().withArgs(user.password, user.password)
   await t.context.Controller.login(req, res)
-  t.truthy(t.context.Response.sendOK.calledWith(res))
+  t.truthy(t.context.Response.sendData.calledWith(res, t.context.Controller.sessionInfo(user)))
   t.truthy(t.context.Model.getByName.verify())
   t.truthy(t.context.Model.comparePassword.verify())
 })
@@ -95,19 +95,30 @@ test('Login throws error', async t => {
   t.truthy(t.context.Response.sendError.calledWith(res, Response.SERVER_ERROR))
 })
 
-test('Session. Get current session.', async t => {
+test('Session. Get current session.', t => {
   t.context.Controller.session(req, res)
-  t.truthy(t.context.Response.sendData.calledWith(res, {
-    name: req.user.name
-  }))
+  t.truthy(t.context.Response.sendData.calledWith(res, t.context.Controller.sessionInfo(user)))
 })
 
-test('Logout', t => {
-  t.context.Controller.logout({
-    logout: sinon.spy()
-  }, res)
-  t.truthy(t.context.Response.sendOK.calledOnce)
+test('SessionInfo returns correct fields', t => {
+  const info = t.context.Controller.sessionInfo(user)
+  t.deepEqual({name: user.name}, info)
+})
+
+test('Logout with logged user', t => {
+  const logout = sinon.spy()
+  const isAuthenticated = () => true
+  t.context.Controller.logout({logout, isAuthenticated}, res)
   t.truthy(t.context.Response.sendOK.calledWith(res))
+  t.truthy(logout.calledOnce)
+})
+
+test('Logout with not logged user', t => {
+  const logout = sinon.spy()
+  const isAuthenticated = () => false
+  t.context.Controller.logout({logout, isAuthenticated}, res)
+  t.truthy(t.context.Response.sendOK.calledWith(res))
+  t.truthy(logout.notCalled)
 })
 
 function prepareTest (t) {

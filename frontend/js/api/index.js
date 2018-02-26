@@ -130,30 +130,30 @@ export class Account {
   }
 }
 
-export function handleResponse (response, emitter, fn) {
-  if (response.code === 403) {
-    emitter.emit('user::logout')
-  } else {
-    fn()
-  }
-}
-
 export const handlers = {
   networkError: {
     message: 'You are in offline mode'
   },
   handleErrors: (state, bus, substate, e) => {
-    if (e.data != null) {
-      e.data.fields = e.data.fields || []
-      substate.error = e.data
-      substate.error.fields = substate.error.fields.reduce((acc, field) => {
-        acc[field.field] = field
-        return acc
-      }, {})
-    } else {
-      substate.error = handlers.networkError
+    switch (e.code) {
+      case 400:
+        if (e.data != null) {
+          e.data.fields = e.data.fields || []
+          substate.error = e.data
+          substate.error.fields = substate.error.fields.reduce((acc, field) => {
+            acc[field.field] = field
+            return acc
+          }, {})
+        } else {
+          substate.error = handlers.networkError
+        }
+        bus.emit(state.events.RENDER)
+        break
+      case 403:
+        bus.emit(state.events.user.LOGOUT)
+        break
+      default:
     }
-    bus.emit(state.events.RENDER)
   }
 }
 
