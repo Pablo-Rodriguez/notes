@@ -2,6 +2,8 @@
 backend/public
 private
 *.lock
+**/.*.swp
+
 # Logs
 logs
 *.log
