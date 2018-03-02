@@ -1,5 +1,5 @@
 
-const test = require('./config.test')
+const test = require('./config.testing')
 const dev = require('./config.dev')
 const prod = require('./config.prod')
 const base = require('./config.base')
