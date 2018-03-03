@@ -75,26 +75,26 @@ test('Create/update throws error', async (t) => {
 
 test('Delete existing note', async (t) => {
   const {Controller, Model, Response, req, res} = t.context
-  Model.delete.returns(Promise.resolve(1)).withArgs(req.user.name, req.params.id)
+  Model.remove.returns(Promise.resolve(1)).withArgs(req.user.name, req.params.id)
   await Controller.delete(req, res)
   expect(Response.sendOK).to.have.been.calledWith(res)
-  Util.verifyMocks(Model.delete)
+  Util.verifyMocks(Model.remove)
 })
 
 test('Delete unknown note', async (t) => {
   const {Controller, Model, Response, req, res} = t.context
-  Model.delete.returns(Promise.resolve(0)).withArgs(req.user.name, req.params.id)
+  Model.remove.returns(Promise.resolve(0)).withArgs(req.user.name, req.params.id)
   await Controller.delete(req, res)
   expect(Response.sendError).to.have.been.calledWith(res, Response.NOT_FOUND)
-  Util.verifyMocks(Model.delete)
+  Util.verifyMocks(Model.remove)
 })
 
 test('Delete note throws error', async (t) => {
   const {Controller, Model, Response, req, res} = t.context
-  Model.delete.throws(new Error('error')).withArgs(req.user.name, req.params.id)
+  Model.remove.throws(new Error('error')).withArgs(req.user.name, req.params.id)
   await Controller.delete(req, res)
   expect(Response.sendError).to.have.been.calledWith(res, Response.SERVER_ERROR)
-  Util.verifyMocks(Model.delete)
+  Util.verifyMocks(Model.remove)
 })
 
 function prepareTest (t) {
@@ -102,7 +102,7 @@ function prepareTest (t) {
     getAll: sinon.mock(),
     getByID: sinon.mock(),
     createOrUpdate: sinon.mock(),
-    delete: sinon.mock()
+    remove: sinon.mock()
   }
   t.context.Response = Util.mockResponse(Response)
   t.context.Controller = createController(t.context.Model, t.context.Response)

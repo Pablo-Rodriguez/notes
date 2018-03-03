@@ -35,7 +35,7 @@ module.exports = (Model, Response) => class extends Controller {
 
   static async delete (req, res) {
     try {
-      const deleted = await Model.delete(req.user.name, req.params.id)
+      const deleted = await Model.remove(req.user.name, req.params.id)
       if (deleted > 0) {
         Response.sendOK(res)
       } else {

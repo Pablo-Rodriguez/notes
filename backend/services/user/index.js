@@ -4,6 +4,7 @@ const createModel = require('./model')
 const createController = require('./controller')
 const Router = require('../../base/router')
 const Passport = require('../../lib/passport')
+const Bcrypt = require('../../lib/bcrypt')
 const Response = require('../../base/response')
 
 module.exports = class extends Router {
@@ -13,7 +14,7 @@ module.exports = class extends Router {
 
   configure () {
     const Schema = DBSchema.get(this.config.db)
-    const Model = createModel(Schema)
+    const Model = createModel(Schema, {Bcrypt})
     this.Controller = createController(Model, Response, {Passport})
   }
 

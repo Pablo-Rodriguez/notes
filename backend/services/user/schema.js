@@ -41,17 +41,21 @@ module.exports = class UserSchema extends Schema {
     user.password = hash
   }
 
+  static get PRIMARY_KEY_ERROR () {
+    return 'That username is already in use'
+  }
+
   static validationFailed (error) {
     if (error.alreadyHandled !== true) {
-      if (error.name.startsWith('Sequelize') && error.errors != null) {
+      if (error.name && error.name.startsWith('Sequelize')
+        && error.errors != null) {
         error.type = 'Validation error'
       }
-      error.errors = error.errors.map((error) => {
-        console.log(error)
+      error.errors = error.errors && error.errors.map((error) => {
         if (error.path.toLowerCase() === 'primary') {
           return {
             field: 'name',
-            message: 'That username is alredy in use'
+            message: UserSchema.PRIMARY_KEY_ERROR
           }
         } else {
           return {
