@@ -19,6 +19,7 @@ color(vars, 'secondary', '#d499b9', '#9055a2', '#56445d')
 
 vars.dark = vars.secondary['d']
 vars.light = '#f4f7f7'
+vars.gray = '#888'
 vars.white = '#fefefe'
 vars.error = '#f16b6f'
 

@@ -23,7 +23,7 @@ module.exports = class NoteSchema extends Schema {
           return this.getDataValue('tags').split(',').map(tag => tag.trim())
         },
         set (val) {
-          return this.setDataValue('tags', val.map(tag => tag.trim()).join(','))
+          return this.setDataValue('tags', val.map(str => str.trim()).join(','))
         }
       }
     }

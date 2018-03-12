@@ -1,13 +1,18 @@
 
+import uuid from 'uuid/v4'
+
 import initial from './initial-state'
 import user from './user'
+import notes from './notes'
 import * as types from './types'
 import * as api from '../api'
 import stateUtil from '../lib/state-util'
+import * as util from '../lib/util'
 
 export default (state, bus) => {
   const reducers = [
-    user({api: api.Account, handlers: api.handlers})
+    user({api: api.Account, handlers: api.handlers}),
+    notes({api: api.Notes, handlers: api.handlers, uuid, util})
   ]
 
   Object.assign(state, initial)

@@ -41,6 +41,7 @@ function signupInputs (state) {
       name: 'name',
       type: 'text',
       placeholder: 'Username',
+      autofocus: true,
       error: state.getIfIsNot(() => user.error.fields.name.message, null)
     },
     {

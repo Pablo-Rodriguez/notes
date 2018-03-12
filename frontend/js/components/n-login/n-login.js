@@ -41,6 +41,7 @@ function loginInputs (state) {
       name: 'name',
       type: 'text',
       placeholder: 'Username',
+      autofocus: true,
       error: null
     },
     {

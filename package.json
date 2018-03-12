@@ -25,6 +25,7 @@
     "browser-sync": "^2.23.6",
     "browserify": "^16.0.0",
     "chai": "^4.1.2",
+    "faker": "^4.1.0",
     "gulp": "^3.9.1",
     "gulp-htmlmin": "^4.0.0",
     "gulp-stylus": "^2.7.0",
@@ -45,6 +46,7 @@
     "choo": "^6.7.0",
     "choo-devtools": "^2.3.3",
     "cookie-parser": "^1.4.3",
+    "debounce": "^1.1.0",
     "emotion": "^9.0.0",
     "express": "^4.15.4",
     "express-history-api-fallback": "^2.2.1",
@@ -58,7 +60,10 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "query-string": "^5.1.0",
-    "sequelize": "^4.33.4"
+    "remark": "^9.0.0",
+    "remark-html": "^7.0.0",
+    "sequelize": "^4.33.4",
+    "uuid": "^3.2.1"
   },
   "ava": {
     "powerAssert": true,
