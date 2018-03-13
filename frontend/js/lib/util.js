@@ -11,3 +11,8 @@ export function downloadAsJSON (obj, name) {
   a.remove()
 }
 
+export const prevent = (fn) => (e) => {
+  e.preventDefault()
+  return fn(e)
+}
+

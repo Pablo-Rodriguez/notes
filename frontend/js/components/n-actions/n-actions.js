@@ -4,6 +4,7 @@ import html from 'choo/html'
 import {container, actions} from './style'
 import toplinebox from '../n-topline-box/n-topline-box'
 import icon from '../n-icon/n-icon'
+import {prevent} from '../../lib/util'
 
 export default (state, emit) => {
   const icons = createIconConfig(state, emit)
@@ -14,11 +15,6 @@ export default (state, emit) => {
       </div>
     `)}
   </aside>`
-}
-
-const prevent = (fn) => (e) => {
-  e.preventDefault()
-  fn(e)
 }
 
 function createIconConfig (state, emit) {
