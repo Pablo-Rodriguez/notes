@@ -36,9 +36,9 @@ export class Base {
     return data
   }
 
-  static async _post (path, body = {}) {
+  static async _bodyVerbs (method = 'POST', path, body = {}) {
     let response = await fetch(url(path), {
-      method: 'POST',
+      method,
       headers: new Headers({
         'Content-Type': 'application/json',
         Accept: 'application/json'
@@ -49,29 +49,31 @@ export class Base {
     return await response.json()
   }
 
-  static async post (path, body = {}) {
+  static async _complexBodyVerbs (method, path, body = {}) {
     if (Base.useCSRF) {
       body._csrf = await Base.getToken()
-      let response = await Base._post(path, body)
+      let response = await Base._bodyVerbs(method, path, body)
       if (response.code && response.code === 403) {
         body._csrf = await Base.fetchToken()
-        return await Base._post(path, body)
+        return await Base._bodyVerbs(method, path, body)
       } else {
         return response
       }
     } else {
-      return Base._post(path, body)
+      return Base._bodyVerbs(method, path, body)
     }
   }
 
+  static post (path, body = {}) {
+    return Base._complexBodyVerbs('POST', path, body)
+  }
+
   static async put (path, body = {}) {
-    body._method = 'PUT'
-    return Base.post(path, body)
+    return Base._complexBodyVerbs('PUT', path, body)
   }
 
   static async delete (path, body = {}) {
-    body._method = 'DELETE'
-    return Base.delete(path, body)
+    return Base._complexBodyVerbs('DELETE', path, body)
   }
 }
 
@@ -103,7 +105,7 @@ function CRUD (base) {
     }
 
     static async delete (id) {
-      return Base.deleteJSON(`${base}/${id}`)
+      return Base.delete(`${base}/${id}`)
     }
   }
 }
@@ -127,6 +129,20 @@ export class Account {
 
   static async logout () {
     return throwOnError(Base.post('/logout'))
+  }
+}
+
+export class Notes {
+  static fetch () {
+    return throwOnError(Base.get('/note'))
+  }
+
+  static save (note) {
+    return throwOnError(Base.put('/note', note))
+  }
+
+  static delete (id) {
+    return throwOnError(Base.delete(`/note/${id}`))
   }
 }
 

@@ -46,12 +46,12 @@ test('Get note throws error', async (t) => {
   Util.verifyMocks(Model.getByID)
 })
 
-test('Create/update note that pass validation', async (t) => {
+test('Create/Update note that pass validation', async (t) => {
   const {Controller, Model, Response, req, res} = t.context
   const note = {title: '', body: ''}
-  Model.createOrUpdate.withArgs(req.user.name, note)
+  Model.createOrUpdate.returns(Promise.resolve(note)).withArgs(req.user.name, note)
   await Controller.createOrUpdate(Object.assign({}, req, {body: note}), res)
-  expect(Response.sendOK).to.have.been.calledWith(res)
+  expect(Response.sendData).to.have.been.calledWith(res, note)
   Util.verifyMocks(Model.createOrUpdate)
 })
 

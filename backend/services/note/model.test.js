@@ -64,15 +64,18 @@ test('Get by Id throws error', async t => {
 })
 
 test('Create note', async t => {
-  const {upsert, Model} = createSimpleMock('upsert')
-  const body = createBody(t)
+  const {create, Model} = createSimpleMock('create')
+  const body = {new: true, id: '12341234', title: 'Note mock title'}
+  const processedNote = Object.assign({}, body)
+  delete processedNote.id
+  processedNote.fk_user = t.context.user.name
   const note = createNote(t)
-  upsert.returns(Promise.resolve(note)).withArgs(body)
+  create.returns(Promise.resolve(note)).withArgs(processedNote)
 
-  const result = await Model.createOrUpdate(t.context.user.name, t.context.note)
+  const result = await Model.createOrUpdate(t.context.user.name, body)
   
   expect(result).to.deep.equal(note)
-  Util.verifyMocks(upsert)
+  Util.verifyMocks(create)
 })
 
 test('Update note', async t => {
@@ -80,11 +83,7 @@ test('Update note', async t => {
   const note = createNote(t)
   upsert.returns(Promise.resolve(note)).withArgs(note)
 
-  const result = await Model.createOrUpdate(
-    t.context.user.name,
-    t.context.note,
-    t.context.noteID
-  )
+  const result = await Model.createOrUpdate(t.context.user.name, note)
 
   expect(result).to.deep.equal(note)
   Util.verifyMocks(upsert)
@@ -100,8 +99,7 @@ test('Create or update throws error', async t => {
   try {
     result = await Model.createOrUpdate(
       t.context.user.name,
-      t.context.note,
-      t.context.noteID
+      note
     )
     t.fail()
   } catch (returnedError) {

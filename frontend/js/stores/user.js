@@ -21,6 +21,7 @@ export default ({api, handlers}) => (state, bus) => {
       user.loading = false
       user.logged = true
       user.data = response.data
+      bus.emit(types.LOGGED_IN)
       bus.emit(state.events.PUSHSTATE, '/')
     } catch (error) {
       handlers.handleErrors(state, bus, user, error)
@@ -33,6 +34,7 @@ export default ({api, handlers}) => (state, bus) => {
       const response = await api.session()
       user.data = response.data
       user.logged = true
+      bus.emit(types.LOGGED_IN)
       bus.emit(state.events.RENDER)
     } catch (error) {
       handlers.handleErrors(state, bus, user, error)

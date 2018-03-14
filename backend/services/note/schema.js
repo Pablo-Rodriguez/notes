@@ -6,6 +6,12 @@ module.exports = class NoteSchema extends Schema {
 
   static properties (Sequelize) {
     return {
+      id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        defaultValue: Sequelize.UUIDV1,
+        primaryKey: true
+      },
       title: {
         type: Sequelize.STRING,
         allowNull: false

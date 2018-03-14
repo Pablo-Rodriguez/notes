@@ -3,7 +3,6 @@ const {join} = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-const methodOverride = require('method-override')
 const expressSession = require('express-session')
 const passport = require('passport')
 const morgan = require('morgan')
@@ -23,7 +22,6 @@ module.exports = class extends Middleware {
   firstmiddleware () {}
 
   premiddleware () {
-    this.router.use(methodOverride('_method'))
     this.router.use(bodyParser.urlencoded({extended: false}))
     this.router.use(bodyParser.json())
     this.router.use(cookieParser())

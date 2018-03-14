@@ -26,8 +26,8 @@ module.exports = (Model, Response) => class extends Controller {
 
   static async createOrUpdate (req, res) {
     try {
-      await Model.createOrUpdate(req.user.name, req.body)
-      Response.sendOK(res)
+      const note = await Model.createOrUpdate(req.user.name, req.body)
+      Response.sendData(res, note)
     } catch (error) {
       Response.handleValidationErrors(res, error)
     }

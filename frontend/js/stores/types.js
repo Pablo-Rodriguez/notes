@@ -3,10 +3,12 @@ export const user = {
   SUBMIT_LOGIN: 'user::submit-login',
   SUBMIT_SIGNUP: 'user::submit-signup',
   GET_SESSION: 'user::get-session',
-  LOGOUT: 'user::logout'
+  LOGOUT: 'user::logout',
+  LOGGED_IN: 'user::logged-in'
 }
 
 export const notes = {
+  FETCH_NOTES: 'notes::fetch',
   ADD_NOTE: 'notes::add',
   SELECT_NOTE: 'notes::select-note',
   NOTE_CHANGE: 'notes::note-change',

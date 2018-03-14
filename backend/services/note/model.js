@@ -10,12 +10,14 @@ module.exports = (Schema) => class extends Model {
     return Schema.findOne({where: {fk_user: username, id}})
   }
 
-  static createOrUpdate (username, body, id) {
+  static createOrUpdate (username, body) {
     body.fk_user = username
-    if (id != null) {
-      body.id = id
+    if (body.new === true && body.id != null) {
+      delete body.id
+      return Schema.create(body)
+    } else {
+      return Schema.upsert(body)
     }
-    return Schema.upsert(body)
   }
 
   static remove (username, id) {
