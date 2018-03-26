@@ -7,6 +7,7 @@ const expressSession = require('express-session')
 const passport = require('passport')
 const morgan = require('morgan')
 const fallback = require('express-history-api-fallback')
+const favicon = require('serve-favicon')
 
 const Middleware = require('../base/middleware')
 const Response = require('../base/response')
@@ -19,7 +20,9 @@ const root = join(__dirname, '..', 'public')
 Middleware.register('auth', auth(Response))
 
 module.exports = class extends Middleware {
-  firstmiddleware () {}
+  firstmiddleware () {
+    this.router.use(favicon(join(__dirname, '..', 'public', 'static', 'img', 'icon.png')))
+  }
 
   premiddleware () {
     this.router.use(bodyParser.urlencoded({extended: false}))
@@ -33,7 +36,7 @@ module.exports = class extends Middleware {
   }
 
   postmiddleware () {
-    this.router.use(fallback('index.html', { root }))
+    this.router.use(fallback('static/index.html', { root }))
   }
 
   lastmiddleware () {

@@ -133,8 +133,15 @@ export class Account {
 }
 
 export class Notes {
-  static fetch () {
-    return throwOnError(Base.get('/note'))
+  static async fetch () {
+    const body = await Base.get('/note')
+    if (body.error && body.code === 0) {
+      // no internet connection
+      body.error = false
+      body.code = 200
+      body.data = { notes: [] }
+    }
+    return throwOnError(body)
   }
 
   static save (note) {

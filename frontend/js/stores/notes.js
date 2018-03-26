@@ -45,7 +45,7 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
           note.new = false
           notes.data.push(note)
         })
-      notes.data.filter(note => !note.sync).forEach(note => emit(types.SAVE_NOTE, note))
+      notes.data.filter(note => !note.sync).forEach(note => bus.emit(types.SAVE_NOTE, note))
       bus.emit(state.events.RENDER)
     } catch (error) {
       console.log('Error fetching notes from server')
@@ -95,6 +95,13 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
       } catch (error) {
         console.log(`Error deleting note with id ${id}`)
       }
+      const storedNotes = JSON.parse(window.localStorage.getItem('notes'))
+      const storedNote = storedNotes.notes.find(storedNote => storedNote.id === id)
+      if (storedNote != null) {
+        storedNote.toBeDeleted = true
+        storedNotes.notes = storedNotes.notes.filter(note => !note.toBeDeleted)
+      }
+      window.localStorage.setItem('notes', JSON.stringify(storedNotes))
       bus.emit(state.events.RENDER)
     }
   })
@@ -109,17 +116,25 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
   })
 
   bus.on(types.SAVE_NOTE, async (note = state.notes.selected) => {
+    const notes = JSON.parse(localStorage.getItem('notes'))
+    const id = note.new ? note.id : null
     try {
       note.updatedAt = new Date().toISOString()
       const response = await api.save(note)
       Object.assign(note, response.data)
       note.new = false
       note.sync = true
-      bus.emit(state.events.RENDER)
     } catch (error) {
-      console.log(error)
-      console.log(`Error saving note with id ${note.id}`)
+    
     }
+    const storedNote = notes.notes.find(storedNote => storedNote.id === note.id || storedNote.id === id)
+    if (storedNote != null) {
+      storedNote.toBeDeleted = true
+      notes.notes = notes.notes.filter(note => !note.toBeDeleted)
+    }
+    notes.notes.push(note)
+    localStorage.setItem('notes', JSON.stringify(notes))
+    bus.emit(state.events.RENDER)
   })
 }
 
