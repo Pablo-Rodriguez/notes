@@ -1,7 +1,10 @@
 
+import Service from '../services/notes'
+
 export default ({api, handlers, uuid, util}) => (state, bus) => {
   const {notes} = state
   const types = state.events.notes
+  const service = new Service(state, bus, uuid)
   
   bus.on(state.events.user.LOGGED_IN, () => {
     bus.emit(types.FETCH_NOTES)
@@ -9,43 +12,12 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
 
   bus.on(types.FETCH_NOTES, async () => {
     try {
-      let localNotes = window.localStorage.getItem('notes')
-      if (localNotes != null) {
-        localNotes = JSON.parse(localNotes).notes
-      } else {
-        window.localStorage.setItem('notes', JSON.stringify({notes: []}))
-        localNotes = []
-      }
+      let localNotes = service.loadLocalNotes().notes
       notes.data = localNotes
       const response = await api.fetch()
       const serverNotes = response.data.notes
-      notes.data.forEach((note) => {
-        const serverNote = serverNotes.find(serverNote => serverNote.id === note.id)
-        const isNew = serverNote == null
-        if (isNew) {
-          note.new = true
-          note.sync = false
-        } else {
-          note.new = false
-          const isMoreRecent = serverNote.updatedAt < note.updatedAt
-          if (!isMoreRecent) {
-            note.sync = false
-          } else {
-            note.sync = true
-            Object.assign(note, serverNote)
-          }
-        }
-      })
-      serverNotes
-        .filter((serverNote) => {
-          return notes.data.find(note => note.id === serverNote.id) == null
-        })
-        .forEach((note) => {
-          note.sync = true
-          note.new = false
-          notes.data.push(note)
-        })
-      notes.data.filter(note => !note.sync).forEach(note => bus.emit(types.SAVE_NOTE, note))
+      service.mergeNotes(notes.data, serverNotes)
+      service.resaveUnsyncedNotes(notes.data)
       bus.emit(state.events.RENDER)
     } catch (error) {
       console.log('Error fetching notes from server')
@@ -54,22 +26,14 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
   })
 
   bus.on(types.ADD_NOTE, () => {
-    const note = {
-      sync: false,
-      title: '',
-      body: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      id: uuid(),
-      new: true
-    }
+    const note = service.createNote()
     notes.data.unshift(note)
     notes.selected = note
     bus.emit(types.SAVE_NOTE, note)
   })
 
   bus.on(types.SELECT_NOTE, (noteID) => {
-    notes.selected = notes.data.find(note => note.id === noteID)
+    notes.selected = service.findById(notes.data, noteID)
     bus.emit(state.events.RENDER)
   })
 
@@ -87,20 +51,16 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
     const note = notes.selected
     if (note != null) {
       const id = note.id
+      notes.selected = null
       try {
         await api.delete(id)
-        note.deleted = true
-        notes.data = notes.data.filter(note => !note.deleted)
-        notes.selected = null
       } catch (error) {
         console.log(`Error deleting note with id ${id}`)
       }
-      const storedNotes = JSON.parse(window.localStorage.getItem('notes'))
-      const storedNote = storedNotes.notes.find(storedNote => storedNote.id === id)
-      if (storedNote != null) {
-        storedNote.toBeDeleted = true
-        storedNotes.notes = storedNotes.notes.filter(note => !note.toBeDeleted)
-      }
+      notes.data = service.removeFromLocal(notes.data, id)
+      const storedNotes = service.loadLocalNotes()
+      storedNotes.notes = service.removeFromLocal(storedNotes.notes, id)
+      service.saveLocalNotes(storedNotes)
       window.localStorage.setItem('notes', JSON.stringify(storedNotes))
       bus.emit(state.events.RENDER)
     }
@@ -116,7 +76,7 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
   })
 
   bus.on(types.SAVE_NOTE, async (note = state.notes.selected) => {
-    const notes = JSON.parse(localStorage.getItem('notes'))
+    const notes = service.loadLocalNotes()
     const id = note.new ? note.id : null
     try {
       note.updatedAt = new Date().toISOString()
@@ -124,16 +84,11 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
       Object.assign(note, response.data)
       note.new = false
       note.sync = true
-    } catch (error) {
-    
-    }
-    const storedNote = notes.notes.find(storedNote => storedNote.id === note.id || storedNote.id === id)
-    if (storedNote != null) {
-      storedNote.toBeDeleted = true
-      notes.notes = notes.notes.filter(note => !note.toBeDeleted)
-    }
+    } catch (error) {}
+    notes.notes = service.removeFromLocal(notes.notes, id)
+    notes.notes = service.removeFromLocal(notes.notes, note.id)
     notes.notes.push(note)
-    localStorage.setItem('notes', JSON.stringify(notes))
+    service.saveLocalNotes(notes)
     bus.emit(state.events.RENDER)
   })
 }
