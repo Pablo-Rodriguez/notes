@@ -19,6 +19,12 @@ export default css`
     background: ${g.white};
   }
 
+  &[data-type="primary"] {
+    color: ${g.primary.n};
+    cursor: default;
+    background: ${g.white};
+  }
+
   &[data-type="danger"] {
     color: ${g.error};
     cursor: pointer;

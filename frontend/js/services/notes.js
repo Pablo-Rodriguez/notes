@@ -12,9 +12,14 @@ export default class NoteService {
   }
 
   loadLocalNotes () {
-    const notes = window.localStorage.getItem('notes')
+    let notes = window.localStorage.getItem('notes')
     if (notes != null) {
-      return JSON.parse(notes)
+      notes = JSON.parse(notes)
+      notes.notes.map((note) => {
+        note.saved = true
+        return note
+      })
+      return notes
     } else {
       this.saveLocalNotes()
       return this.loadLocalNotes()
@@ -48,17 +53,21 @@ export default class NoteService {
   getUnsavedNotes (origin, local) {
     return origin
       .filter((originNote) => {
+        console.log(originNote)
         return local.find(note => note.id === originNote.id) == null
       })
-      .forEach((note) => {
+      .map((note) => {
         note.sync = true
         note.new = false
+        note.saved = true
+        return note
       })
   }
 
   mergeNotes (local, origin) {
     this.updateNotesStates(local, origin)
-    return local.concat(this.getUnsavedNotes(origin, local))
+    const unsavedNotes = this.getUnsavedNotes(origin, local)
+    return local.concat(unsavedNotes)
   }
 
   resaveUnsyncedNotes (notes) {
@@ -68,6 +77,7 @@ export default class NoteService {
   createNote () {
     return {
       sync: false,
+      saved: false,
       title: '',
       body: '',
       createdAt: new Date().toISOString(),

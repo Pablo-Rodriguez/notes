@@ -1,4 +1,6 @@
 
+import nanobus from 'nanobus'
+
 export default class SW {
   constructor (self, VERSION) {
     this.self = self
@@ -56,11 +58,39 @@ export default class SW {
   }
 
   cacheFirst (e) {
+    const bus = nanobus()
+    const toBeCache = new Promise((resolve, reject) => {
+      bus.on('cache', resolve)
+      bus.on('no-cache', reject)
+    })
     e.respondWith(async function () {
-      const cached = await caches.match(e.request)
-      return cached || fetch(e.request)
-        .catch(() => new Response(null, {status: 404}))
+      try {
+        const cached = await cached
+        if (cached != null) {
+          return cached
+        } else {
+          const fetched = fetch(e.request)
+          const fetchedCopy = fetched.then(response => response.clone())
+          const response = await fetched
+          bus.emit('cache', fetchedCopy)
+          return fetched
+        }
+      } catch (error) {
+        bus.emit('no-cached')
+      }
     }())
+
+    e.waitUntil(async function () {
+      try {
+        const response = await toBeCache
+        if (response != null) {
+          const cache = await caches.open(this.STATIC_CACHE)
+          return cache.put(e.request, response)
+        } else {
+          return
+        }
+      } catch (error) {/*eat errors*/}
+    }.call(this))
   }
 
   staleWhileRevalidate (e) {

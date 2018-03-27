@@ -19,9 +19,25 @@ export default css`
     margin: .5em;
     text-align: justify;
   }
-  .note-date {
-    color: ${g.primary.n};
-    margin-right: .5em;
+  > footer {
+    margin: .5em;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    .note-date {
+      flex: 5;
+      white-space: nowrap;
+      color: ${g.primary.n};
+    }
+    .note-icons {
+      display: flex;
+      flex: 1;
+      justify-content: space-around;
+      > * {
+        padding: .5em;
+      }
+    }
   }
   &:hover {
     box-shadow: ${g.shadow.side(5)};

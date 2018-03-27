@@ -16,8 +16,9 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
       notes.data = localNotes
       const response = await api.fetch()
       const serverNotes = response.data.notes
-      service.mergeNotes(notes.data, serverNotes)
+      notes.data = service.mergeNotes(notes.data, serverNotes)
       service.resaveUnsyncedNotes(notes.data)
+      service.saveLocalNotes({notes: notes.data})
       bus.emit(state.events.RENDER)
     } catch (error) {
       console.log('Error fetching notes from server')
@@ -39,6 +40,8 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
 
   bus.on(types.NOTE_CHANGE, (note) => {
     Object.assign(notes.selected, note)
+    notes.selected.saved = false
+    notes.selected.sync = false
     bus.emit(state.events.RENDER)
   })
 
@@ -89,6 +92,7 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
     notes.notes = service.removeFromLocal(notes.notes, note.id)
     notes.notes.push(note)
     service.saveLocalNotes(notes)
+    note.saved = true
     bus.emit(state.events.RENDER)
   })
 }

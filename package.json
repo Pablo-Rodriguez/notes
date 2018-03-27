@@ -55,6 +55,7 @@
     "mixin-es6": "^1.0.1",
     "morgan": "^1.8.2",
     "mysql2": "^1.5.2",
+    "nanobus": "^4.3.3",
     "nanocomponent": "^6.5.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
