@@ -65,6 +65,10 @@ export default class NoteService {
     const unsavedNotes = this.getUnsavedNotes(origin, local)
     return local.concat(unsavedNotes)
   }
+  
+  sendLocallyDeletedNotes (notes) {
+    notes.forEach(note => this.bus.emit(this.types.DELETE_NOTE, note))
+  }
 
   resaveUnsyncedNotes (notes) {
     notes.filter(note => !note.sync).forEach(note => this.bus.emit(this.types.SAVE_NOTE, note))

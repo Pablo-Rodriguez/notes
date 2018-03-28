@@ -17,7 +17,8 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
       const response = await api.fetch()
       const serverNotes = response.data.notes
       notes.data = service.mergeNotes(notes.data, serverNotes)
-      service.resaveUnsyncedNotes(notes.data)
+      service.resaveUnsyncedNotes(notes.data.filter(note => !note.deleted))
+      service.sendLocallyDeletedNotes(notes.data.filter(note => note.deleted))
       service.saveLocalNotes({notes: notes.data})
       bus.emit(state.events.RENDER)
     } catch (error) {
@@ -50,21 +51,22 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
     bus.emit(state.events.RENDER)
   })
 
-  bus.on(types.DELETE_NOTE, async () => {
-    const note = notes.selected
+  bus.on(types.DELETE_NOTE, async (note = notes.selected) => {
     if (note != null) {
       const id = note.id
       notes.selected = null
+      note.deleted = true
+      note.updatedAt = new Date().toISOString()
+      const storedNotes = service.loadLocalNotes()
+      storedNotes.notes = service.removeFromLocal(storedNotes.notes, id)
+      notes.data = service.removeFromLocal(notes.data, id)
       try {
         await api.delete(id)
       } catch (error) {
-        console.log(`Error deleting note with id ${id}`)
+        storedNotes.notes.push(note)
+        notes.data.push(note)
       }
-      notes.data = service.removeFromLocal(notes.data, id)
-      const storedNotes = service.loadLocalNotes()
-      storedNotes.notes = service.removeFromLocal(storedNotes.notes, id)
       service.saveLocalNotes(storedNotes)
-      window.localStorage.setItem('notes', JSON.stringify(storedNotes))
       bus.emit(state.events.RENDER)
     }
   })

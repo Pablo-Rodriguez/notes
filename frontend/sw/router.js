@@ -5,8 +5,8 @@ export default class Router {
   }
 
   route (path = '', method = 'all', fn) {
-    this.routes[path] = this.routes[path] || {}
-    this.routes[path][method] = fn
+    this.routes[method] = this.routes[method] || {}
+    this.routes[method][path] = fn
   }
 
   get (path, fn) { this.route(path, 'get', fn) }
@@ -17,9 +17,10 @@ export default class Router {
   handle (path = '', method = 'all', e) {
     console.log(`${method}: ${path}`)
     method = method.toLowerCase()
-    const route = this.routes[path]
-    if (route != null) {
-      const fn = route[method]
+    const routes = this.routes[method]
+    if (routes != null) {
+      const match = Object.keys(routes).find(route => path.startsWith(route))
+      const fn = routes[match || '']
       if (fn != null) {
         return fn(e)
       } else {
