@@ -34,10 +34,7 @@ export default class NoteService {
     local.forEach((note) => {
       const originNote = this.findById(origin, note.id)
       const isNew = originNote == null
-      if (isNew) {
-        note.new = true
-        note.sync = false
-      } else {
+      if (!isNew) {
         note.new = false
         const localIsOutdated = String(originNote.updatedAt) >= String(note.updatedAt)
         if (localIsOutdated) {
