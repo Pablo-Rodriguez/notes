@@ -35,6 +35,7 @@ export const title = css`
   &:focus {
     border-bottom: 2px solid ${g.secondary.n};
     color: ${g.secondary.n};
+    outline: 0;
   }
 `
 
@@ -49,6 +50,10 @@ export const body = css`
     border: none;
     resize: none;
     font-size: 18px;
+  }
+
+  > textarea:focus {
+    outline: 0;
   }
 `
 

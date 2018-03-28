@@ -65,7 +65,7 @@ export default class SW {
     })
     e.respondWith(async function () {
       try {
-        const cached = await cached
+        const cached = await caches.match(e.request)
         if (cached != null) {
           return cached
         } else {
@@ -82,7 +82,8 @@ export default class SW {
 
     e.waitUntil(async function () {
       try {
-        const response = await toBeCache
+        const fetchCopy = await toBeCache
+        const response = await fetchCopy
         if (response != null) {
           const cache = await caches.open(this.STATIC_CACHE)
           return cache.put(e.request, response)

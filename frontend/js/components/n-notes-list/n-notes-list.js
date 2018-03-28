@@ -9,6 +9,7 @@ const listNote = (data) => html`<li data-id="${data.id}">${note(data)}</li>`
 export default (state, emit) => {
   const notes = state.getIfIsNot(() => state.notes.data, null, [])
     .filter(note => note.title.startsWith(state.notes.filter))
+    .sort((a, b) => a.updatedAt < b.updatedAt ? 1 : -1)
     .map(markSelected(state))
   return html`
     <ul class=${style} onclick=${selectNote(state, emit)}>

@@ -53,7 +53,6 @@ export default class NoteService {
   getUnsavedNotes (origin, local) {
     return origin
       .filter((originNote) => {
-        console.log(originNote)
         return local.find(note => note.id === originNote.id) == null
       })
       .map((note) => {
