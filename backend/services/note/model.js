@@ -1,7 +1,7 @@
 
 const Model = require('../../base/model')
 
-module.exports = (Schema) => class extends Model {
+module.exports = (Schema) => class NoteModel extends Model {
   static getAll (username) {
     return Schema.findAll({where: {fk_user: username}})
   }
@@ -10,13 +10,14 @@ module.exports = (Schema) => class extends Model {
     return Schema.findOne({where: {fk_user: username, id}})
   }
 
-  static createOrUpdate (username, body) {
+  static async createOrUpdate (username, body) {
     body.fk_user = username
     if (body.new === true && body.id != null) {
       delete body.id
       return Schema.create(body)
     } else {
-      return Schema.upsert(body)
+      await Schema.upsert(body)
+      return NoteModel.getByID(username, body.id)
     }
   }
 

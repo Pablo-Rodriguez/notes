@@ -81,8 +81,8 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
   bus.on(types.SAVE_NOTE, async (note = state.notes.selected) => {
     const notes = service.loadLocalNotes()
     const id = note.new ? note.id : null
+    note.updatedAt = new Date().toISOString()
     try {
-      note.updatedAt = new Date().toISOString()
       const response = await api.save(note)
       Object.assign(note, response.data)
       note.new = false

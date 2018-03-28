@@ -39,12 +39,12 @@ export default class NoteService {
         note.sync = false
       } else {
         note.new = false
-        const isMoreRecent = originNote.updatedAt < note.updatedAt
-        if (!isMoreRecent) {
-          note.sync = false
-        } else {
+        const localIsOutdated = String(originNote.updatedAt) >= String(note.updatedAt)
+        if (localIsOutdated) {
           note.sync = true
           Object.assign(note, originNote)
+        } else {
+          note.sync = false
         }
       }
     })

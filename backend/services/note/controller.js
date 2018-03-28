@@ -29,6 +29,7 @@ module.exports = (Model, Response) => class extends Controller {
       const note = await Model.createOrUpdate(req.user.name, req.body)
       Response.sendData(res, note)
     } catch (error) {
+      console.log(error)
       Response.handleValidationErrors(res, error)
     }
   }

@@ -21,6 +21,7 @@ export default ({api, handlers}) => (state, bus) => {
       user.loading = false
       user.logged = true
       user.data = response.data
+      api.session() // We need this to be cached in the service worker so we fire and forget
       bus.emit(types.LOGGED_IN)
       bus.emit(state.events.PUSHSTATE, '/')
     } catch (error) {
