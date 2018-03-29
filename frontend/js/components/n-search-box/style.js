@@ -13,6 +13,13 @@ export default css`
     border-radius: 500px;
     box-sizing: border-box;
     padding: .3em 1em;
+    color: ${g.primary.n};
+  }
+
+  input:focus {
+    outline: 0;
+    border-color: ${g.secondary.n};
+    color: ${g.secondary.n};
   }
 `
 

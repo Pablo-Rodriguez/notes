@@ -11,7 +11,7 @@ export default (state, emit) => {
   return html`<aside class=${container}>
     ${toplinebox(html`
       <div class=${actions}>
-        ${icons.map(config => icon(config.name, config.type, {onclick: config.onclick}))}
+        ${icons.map(config => icon(config.name, config.type, {onclick: config.onclick, title: config.title}))}
       </div>
     `)}
   </aside>`
@@ -22,11 +22,13 @@ function createIconConfig (state, emit) {
     {
       name: 'add',
       type: '',
+      title: 'Create note',
       onclick: prevent((e) => {
         emit(state.events.notes.ADD_NOTE)
       })
     }, {
       name: 'delete',
+      title: 'Delete note',
       type: state.getIfIsNot(() => state.notes.selected, null) != null ? 'danger' : 'disabled',
       onclick: prevent((e) => {
         if (state.notes.selected != null) {
@@ -36,13 +38,17 @@ function createIconConfig (state, emit) {
     }, {
       name: 'export',
       type: '',
+      title: 'Export notes in JSON format',
       onclick: prevent((e) => {
         emit(state.events.notes.EXPORT_NOTES)
       })
     }, {
-      name: 'import',
+      name: 'exit',
       type: '',
-      onclick: prevent((e) => {console.log('import')})
+      title: 'Log out (this will remove all locally-saved data)',
+      onclick: prevent((e) => {
+        emit(state.events.user.LOGOUT)
+      })
     }
   ]
 }

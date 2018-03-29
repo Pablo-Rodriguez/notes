@@ -1,7 +1,10 @@
 
+import NotesService from '../services/notes'
+
 export default ({api, handlers}) => (state, bus) => {
   const types = state.events.user
   const user = state.user
+  const notesService = new NotesService(state, bus)
   
   bus.on(types.SUBMIT_SIGNUP, async (e) => {
     try {
@@ -44,6 +47,7 @@ export default ({api, handlers}) => (state, bus) => {
 
   bus.on(types.LOGOUT, (e) => {
     clearUser(user)
+    notesService.removeLocalData()
     api.logout()
     bus.emit(state.events.REPLACESTATE, '/login')
     bus.emit(state.events.RENDER)

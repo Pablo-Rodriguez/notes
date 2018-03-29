@@ -46,6 +46,16 @@ export default class SW {
     return new Response(JSON.stringify(body), init)
   }
 
+  fireAndForget (e) {
+    e.respondWith(async function () {
+      try {
+        return await fetch(e.request)
+      } catch (error) {
+        return this.response({error: false, code: 200, data: {}}, {status: 200})
+      }
+    }.call(this))
+  }
+
   fetchOrNetworkError (e) {
     e.respondWith(async function () {
       try {
@@ -94,7 +104,7 @@ export default class SW {
     }.call(this))
   }
 
-  staleWhileRevalidate (e) {
+  staleWhileRevalidate (e, body = null, status = {status: 404}) {
     const fetched = fetch(e.request)
     const fetchedCopy = fetched.then(response => response.clone())
     const cached = caches.match(e.request)
@@ -109,7 +119,7 @@ export default class SW {
         return response || await fetched
       } catch (error) {
         console.log(error)
-        return new Response(null, {status: 404})
+        return this.response(body, status)
       }
     }.call(this))
 

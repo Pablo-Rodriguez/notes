@@ -1,6 +1,6 @@
 
 export default class NoteService {
-  constructor (state, bus, uuid) {
+  constructor (state = {events: {notes: {}}}, bus = {}, uuid = {}) {
     this.state = state
     this.bus = bus
     this.types = this.state.events.notes
@@ -89,5 +89,11 @@ export default class NoteService {
 
   removeFromLocal (notes, id) {
     return notes.filter(_ => _.id !== id)
+  }
+
+  removeLocalData () {
+    window.localStorage.removeItem('notes')
+    this.state.notes.data = null
+    this.state.notes.selected = null
   }
 }
