@@ -42,12 +42,11 @@ export default ({api, handlers}) => (state, bus) => {
     }
   })
 
-  bus.on(types.LOGOUT, async (e) => {
-    try {
-      clearUser(user)
-      api.logout()
-      bus.emit(state.events.PUSHSTATE, '/login')
-    } catch (error) {}
+  bus.on(types.LOGOUT, (e) => {
+    clearUser(user)
+    api.logout()
+    bus.emit(state.events.REPLACESTATE, '/login')
+    bus.emit(state.events.RENDER)
   })
 }
 
