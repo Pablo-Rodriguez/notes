@@ -62,7 +62,13 @@ export default class SW {
         const fetched = await fetch(e.request)
         return fetched
       } catch (error) {
-        return this.response({error: true, code: 0}, {status: 200})
+        return this.response({
+          error: true,
+          code: 0,
+          data: {
+            message: 'Only available in online mode'
+          }
+        }, {status: 200})
       }
     }.call(this))
   }

@@ -119,7 +119,7 @@ export class Account {
     if (password === repeat) {
       return throwOnError(Base.post('/signup', {name, password}))
     } else {
-      throw {error: true, data: { message: '"Password" and "Repeat password" must be the same.' }}
+      throw {error: true, code: 400, data: { message: '"Password" and "Repeat password" must be the same.' }}
     }
   }
 
@@ -159,6 +159,7 @@ export const handlers = {
   },
   handleErrors: (state, bus, substate, e) => {
     switch (e.code) {
+      case 0:
       case 400:
         if (e.data != null) {
           e.data.fields = e.data.fields || []

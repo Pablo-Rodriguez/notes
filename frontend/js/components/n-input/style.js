@@ -10,6 +10,7 @@ export default css`
     border: none;
     font-size: 16px;
     padding: .5em;
+    width: calc(100% - 1em);
   }
   span {
     color: ${g.error};

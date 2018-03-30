@@ -44,6 +44,9 @@ export default css`
   }
   &[data-selected="true"] {
     background: ${g.light};
+    > footer .note-icons > * {
+      background: ${g.light};
+    }
   }
 `
 

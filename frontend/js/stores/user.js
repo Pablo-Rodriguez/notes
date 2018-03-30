@@ -5,7 +5,11 @@ export default ({api, handlers}) => (state, bus) => {
   const types = state.events.user
   const user = state.user
   const notesService = new NotesService(state, bus)
-  
+
+  bus.on(state.events.NAVIGATE, () => {
+    user.error = null
+  })
+
   bus.on(types.SUBMIT_SIGNUP, async (e) => {
     try {
       clearAndChangeToLoading(state, bus)

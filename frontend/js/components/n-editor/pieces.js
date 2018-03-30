@@ -12,7 +12,6 @@ export function editor (state, note, emit) {
     <div class=${style} oninput=${onChange(state, emit)}>
       <header data-id="${note.id}">
         <input class="${title}" data-field="title" placeholder="Your note title..." value="${note.title || ''}">
-        ${saveButton(state, emit)}
       </header>
       <article class=${body}>
         ${state.notes.preview ? preview(note.body) : textarea(note.body)}
