@@ -79,14 +79,15 @@ test('Create note', async t => {
 })
 
 test('Update note', async t => {
-  const {upsert, Model} = createSimpleMock('upsert')
+  const {upsert, findOne, Model} = createSimpleMock('upsert', 'findOne')
   const note = createNote(t)
-  upsert.returns(Promise.resolve(note)).withArgs(note)
+  upsert.withArgs(note)
+  findOne.returns(Promise.resolve(note)).withArgs({where: {fk_user: t.context.user.name, id: note.id}})
 
   const result = await Model.createOrUpdate(t.context.user.name, note)
 
   expect(result).to.deep.equal(note)
-  Util.verifyMocks(upsert)
+  Util.verifyMocks(upsert, findOne)
 })
 
 test('Create or update throws error', async t => {
@@ -159,14 +160,13 @@ function createNote (t) {
   })
 }
 
-function createSimpleMock (name) {
-  const mock = sinon.mock()
-  const Schema = { [name]: mock }
+function createSimpleMock (...args) {
+  let Schema = {}
+  args.forEach((name) => {
+    Schema[name] = sinon.mock()
+  })
   const Model = createModel(Schema)
-  return {
-    [name]: mock,
-    Model
-  }
+  return Object.assign({Model}, Schema)
 }
 
 function setGlobals (t) {
