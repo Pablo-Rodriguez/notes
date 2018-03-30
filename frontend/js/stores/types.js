@@ -11,6 +11,7 @@ export const notes = {
   FETCH_NOTES: 'notes::fetch',
   ADD_NOTE: 'notes::add',
   SELECT_NOTE: 'notes::select-note',
+  REMOVE_SELECTION: 'notes::remove-selection',
   NOTE_CHANGE: 'notes::note-change',
   CHANGE_VIEW: 'notes::change-view',
   DELETE_NOTE: 'notes::delete',

@@ -1,6 +1,8 @@
 
 import {css} from 'emotion'
 
+import {phablet, desktop} from '../../lib/media-queries'
+
 export default css`
   display: flex;
   height: 90vh;
@@ -29,6 +31,52 @@ export default css`
       > div {
         height: 100%;
       }
+    }
+  }
+
+  ${desktop} {
+    > aside {
+      margin-right: 0;
+      overflow: auto;
+      overflow-y: scroll;
+      > div {
+        height: auto;
+        width: auto;
+        overflow: auto;
+      }
+    }
+    > section {
+      margin-left: 0;
+    }
+  }
+
+  ${phablet} {
+    margin: 0;
+    height: calc(100vh - 2em);
+    width: 100vw;
+    padding: 1em;
+    padding-right: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    > aside {
+      overflow-x: hidden;
+      width: 100%;
+      padding-right: 0;
+      > div {
+        padding-right: 1em;
+      }
+    }
+  }
+  
+  &[data-aside-hidden="true"] {
+    > aside {
+      display: none;
+    }
+    padding-right: 1em;
+    width: calc(100vw - 2em);
+
+    ${desktop} {
+      padding-right: 0;
     }
   }
 `

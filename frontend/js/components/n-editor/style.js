@@ -2,6 +2,7 @@
 import {css} from 'emotion'
 
 import g from '../../lib/css-variables'
+import {desktop} from '../../lib/media-queries'
 
 export default css`
   padding: 1em;
@@ -19,6 +20,27 @@ export default css`
       flex-basis: 10%;
       margin: 1em;
     }
+
+    > span {
+      display: none;
+    }
+  }
+
+  ${desktop} {
+    > header > span {
+      display: block;
+      font-size: 20px;
+    }
+  }
+`
+
+export const container = css`
+  ${desktop} {
+    margin-left: 0;
+  }
+
+  &[data-hidden="true"] {
+    display: none;
   }
 `
 
@@ -60,9 +82,22 @@ export const body = css`
 export const footer = css`
   display: flex;
   justify-content: flex-end;
+  > span {
+    display: none;
+  }
   > * {
     margin: 1em;
     flex-basis: 10%;
+  }
+
+  ${desktop} {
+    > span {
+      display: block;
+      flex-basis: 0;
+      margin: 0 1em;
+      font-size: 28px;
+      align-self: center;
+    }
   }
 `
 

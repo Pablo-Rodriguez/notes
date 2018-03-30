@@ -11,6 +11,7 @@ export default {
     selected: null,
     preview: false,
     filter: ''
-  }
+  },
+  mediaqueries: {}
 }
 

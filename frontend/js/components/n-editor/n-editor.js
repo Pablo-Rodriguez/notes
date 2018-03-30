@@ -3,10 +3,11 @@ import html from 'choo/html'
 
 import toplinebox from '../n-topline-box/n-topline-box'
 import {editor, empty} from './pieces'
+import {container} from './style'
 
 export default (state, emit) => {
   return html`
-    <section>
+    <section class=${container} data-hidden=${state.mediaqueries.desktop && state.notes.selected == null}>
       ${toplinebox(getContent(state, emit))}
     </section>
   `

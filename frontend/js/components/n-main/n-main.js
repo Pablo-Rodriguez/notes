@@ -9,7 +9,7 @@ import editor from '../n-editor/n-editor'
 
 export default (state, emit) => {
   return html`
-    <div class=${style}>
+    <div class=${style} data-aside-hidden=${state.mediaqueries.desktop && state.notes.selected != null}>
       <aside>
         <div>
           ${searchbox(state, emit)}

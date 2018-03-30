@@ -22,8 +22,7 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
       service.saveLocalNotes({notes: notes.data})
       bus.emit(state.events.RENDER)
     } catch (error) {
-      console.log('Error fetching notes from server')
-      console.log(error)
+      handlers.handleErrors(error)
     }
   })
 
@@ -36,6 +35,11 @@ export default ({api, handlers, uuid, util}) => (state, bus) => {
 
   bus.on(types.SELECT_NOTE, (noteID) => {
     notes.selected = service.findById(notes.data, noteID)
+    bus.emit(state.events.RENDER)
+  })
+
+  bus.on(types.REMOVE_SELECTION, () => {
+    notes.selected = null
     bus.emit(state.events.RENDER)
   })
 

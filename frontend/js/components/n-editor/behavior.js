@@ -17,7 +17,15 @@ export const onChange = (state, emit) => debounce((e) => {
   }
 }, 600)
 
+export const removeSelection = (state, emit) => prevent((e) => {
+  emit(state.events.notes.REMOVE_SELECTION)
+})
+
 export const onViewChange = (state, emit) => prevent((e) => {
   emit(state.events.notes.CHANGE_VIEW)
+})
+
+export const deleteNote = (state, emit) => prevent((e) => {
+  emit(state.events.notes.DELETE_NOTE)
 })
 
