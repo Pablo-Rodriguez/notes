@@ -6,6 +6,6 @@ const base = require('./config.base')
 const {deepAssign} = require('../lib/helpers')
 
 const env = process.env.NODE_ENV
-const config = (env === 'test') ? test : ((env === 'prod') ? prod : dev)
+const config = (env === 'test') ? test : ((env === 'production') ? prod : dev)
 
 module.exports = deepAssign({}, base, config)
