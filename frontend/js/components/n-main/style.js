@@ -81,6 +81,14 @@ export default css`
     ${desktop} {
       padding-right: 0;
     }
+
+    ${phablet} {
+      display: flex;
+      > section {
+        min-width: 0px;
+        flex-basis: 0px;
+      }
+    }
   }
 `
 

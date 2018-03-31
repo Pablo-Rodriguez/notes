@@ -53,6 +53,8 @@ export const title = css`
   font-size: 22px;
   padding: .5em;
   margin: .5em;
+  min-width: 0px;
+  flex-basis: 0px;
   
   &:focus {
     border-bottom: 2px solid ${g.secondary.n};
@@ -94,7 +96,7 @@ export const footer = css`
     > span {
       display: block;
       flex-basis: 0;
-      margin: 0 1em;
+      margin: 0 .5em;
       font-size: 28px;
       align-self: center;
     }

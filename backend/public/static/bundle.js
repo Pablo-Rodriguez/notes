@@ -989,11 +989,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = /*#__PURE__*/(0, _emotion.css)('padding:1em;display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;height:calc(100% - 2em);> header{display:flex;align-items:center;> input[type="button"]{flex-basis:10%;margin:1em;}> span{display:none;}}', _mediaQueries.desktop, '{> header > span{display:block;font-size:20px;}}');
 var container = /*#__PURE__*/exports.container = (0, _emotion.css)(_mediaQueries.desktop, '{margin-left:0;}&[data-hidden="true"]{display:none;}');
 
-var title = /*#__PURE__*/exports.title = (0, _emotion.css)('flex:1;border:none;box-sizing:border-box;border-bottom:1px solid ', _cssVariables2.default.primary.n, ';color:', _cssVariables2.default.primary.n, ';font-size:22px;padding:.5em;margin:.5em;&:focus{border-bottom:2px solid ', _cssVariables2.default.secondary.n, ';color:', _cssVariables2.default.secondary.n, ';outline:0;}');
+var title = /*#__PURE__*/exports.title = (0, _emotion.css)('flex:1;border:none;box-sizing:border-box;border-bottom:1px solid ', _cssVariables2.default.primary.n, ';color:', _cssVariables2.default.primary.n, ';font-size:22px;padding:.5em;margin:.5em;min-width:0px;flex-basis:0px;&:focus{border-bottom:2px solid ', _cssVariables2.default.secondary.n, ';color:', _cssVariables2.default.secondary.n, ';outline:0;}');
 
 var body = /*#__PURE__*/exports.body = (0, _emotion.css)('flex:1;padding:1em;overflow:auto;> textarea{width:100%;height:100%;border:none;resize:none;font-size:18px;}> textarea:focus{outline:0;}');
 
-var footer = /*#__PURE__*/exports.footer = (0, _emotion.css)('display:flex;justify-content:flex-end;> span{display:none;}> *{margin:1em;flex-basis:10%;}', _mediaQueries.desktop, '{> span{display:block;flex-basis:0;margin:0 1em;font-size:28px;align-self:center;}}');
+var footer = /*#__PURE__*/exports.footer = (0, _emotion.css)('display:flex;justify-content:flex-end;> span{display:none;}> *{margin:1em;flex-basis:10%;}', _mediaQueries.desktop, '{> span{display:block;flex-basis:0;margin:0 .5em;font-size:28px;align-self:center;}}');
 
 },{"../../lib/css-variables":37,"../../lib/media-queries":39,"emotion":411}],9:[function(require,module,exports){
 'use strict';
@@ -1385,7 +1385,7 @@ var _emotion = require('emotion');
 
 var _mediaQueries = require('../../lib/media-queries');
 
-exports.default = /*#__PURE__*/(0, _emotion.css)('display:flex;height:90vh;width:90vw;margin:0 auto;margin-top:5vh;align-items:stretch;> aside{flex:1 1 20%;margin-right:1em;overflow-x:hidden;> div{height:90vh;width:100%;padding-right:1em;overflow-y:auto;overflow-x:hidden;}}> section{flex:1 1 80%;margin-left:1em;> div{height:calc(100% - 4px);> div{height:100%;}}}', _mediaQueries.desktop, '{> aside{margin-right:0;overflow:auto;overflow-y:scroll;> div{height:auto;width:auto;overflow:auto;}}> section{margin-left:0;}}', _mediaQueries.phablet, '{display:block;margin:0;height:calc(100vh - 2em);width:100vw;padding:1em;padding-right:0;overflow-x:hidden;overflow-y:hidden;> aside{overflow-x:hidden;width:100%;padding-right:2em;width:calc(100vw - 2em);> div{padding-right:1em;width:calc(100vw - 2em);}}}&[data-aside-hidden="true"]{> aside{display:none;}padding-right:1em;width:calc(100vw - 2em);', _mediaQueries.desktop, '{padding-right:0;}}');
+exports.default = /*#__PURE__*/(0, _emotion.css)('display:flex;height:90vh;width:90vw;margin:0 auto;margin-top:5vh;align-items:stretch;> aside{flex:1 1 20%;margin-right:1em;overflow-x:hidden;> div{height:90vh;width:100%;padding-right:1em;overflow-y:auto;overflow-x:hidden;}}> section{flex:1 1 80%;margin-left:1em;> div{height:calc(100% - 4px);> div{height:100%;}}}', _mediaQueries.desktop, '{> aside{margin-right:0;overflow:auto;overflow-y:scroll;> div{height:auto;width:auto;overflow:auto;}}> section{margin-left:0;}}', _mediaQueries.phablet, '{display:block;margin:0;height:calc(100vh - 2em);width:100vw;padding:1em;padding-right:0;overflow-x:hidden;overflow-y:hidden;> aside{overflow-x:hidden;width:100%;padding-right:2em;width:calc(100vw - 2em);> div{padding-right:1em;width:calc(100vw - 2em);}}}&[data-aside-hidden="true"]{> aside{display:none;}padding-right:1em;width:calc(100vw - 2em);', _mediaQueries.desktop, '{padding-right:0;}', _mediaQueries.phablet, '{display:flex;> section{min-width:0px;flex-basis:0px;}}}');
 
 },{"../../lib/media-queries":39,"emotion":411}],22:[function(require,module,exports){
 'use strict';
