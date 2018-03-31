@@ -1,6 +1,6 @@
 {
   "name": "notes",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Small notes app",
   "main": "backend/server.js",
   "repository": "git@github.com:Pablo-Rodriguez/notes.git",
@@ -11,8 +11,9 @@
     "standard": "standard --fix",
     "gulp": "gulp",
     "sync": "browser-sync start --proxy localhost:5000 --port 3000 --files ./backend/public",
-    "dev": "nodemon --exec 'npm start' --watch ./backend --ignore ./backend/public",
-    "start": "node --trace-warnings index.js"
+    "dev": "NODE_ENV=development nodemon --exec 'npm run up' --watch ./backend --ignore ./backend/public",
+    "up": "node --trace-warnings index.js",
+    "start": "NODE_ENV=production npm run up"
   },
   "devDependencies": {
     "ava": "^0.22.0",
