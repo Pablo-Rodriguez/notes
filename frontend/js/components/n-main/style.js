@@ -51,6 +51,7 @@ export default css`
   }
 
   ${phablet} {
+    display: block;
     margin: 0;
     height: calc(100vh - 2em);
     width: 100vw;
@@ -61,9 +62,11 @@ export default css`
     > aside {
       overflow-x: hidden;
       width: 100%;
-      padding-right: 0;
+      padding-right: 2em;
+      width: calc(100vw - 2em);
       > div {
         padding-right: 1em;
+        width: calc(100vw - 2em);
       }
     }
   }
