@@ -11,6 +11,7 @@ const favicon = require('serve-favicon')
 
 const Middleware = require('../base/middleware')
 const Response = require('../base/response')
+const sslredirect = require('./ssl-redirect')
 const errors = require('./errors')
 const config = require('../config/')
 const auth = require('./auth')
@@ -21,6 +22,7 @@ Middleware.register('auth', auth(Response))
 
 module.exports = class extends Middleware {
   firstmiddleware () {
+    super.use('sslredirect', sslredirect())
     this.router.use(favicon(join(__dirname, '..', 'public', 'static', 'img', 'icon.png')))
   }
 
