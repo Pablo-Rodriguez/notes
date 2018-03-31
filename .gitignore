@@ -1,5 +1,4 @@
 # Own
-backend/public
 private
 *.lock
 **/.*.swp
