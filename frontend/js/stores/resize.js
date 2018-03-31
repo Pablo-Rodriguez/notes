@@ -6,7 +6,6 @@ export default () => (state, bus) => {
     state.mediaqueries[data.name] = data.match.matches
     bus.emit(state.events.RENDER)
   })
-  console.log(initialValue)
   Object.assign(state.mediaqueries, initialValue)
 }
 
